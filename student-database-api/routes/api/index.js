@@ -18,6 +18,10 @@ router.get("/viewMoreInfo", function(req, res) {
     })
 })
 
+router.use("/admin", require("./admin"));
+router.use("/teacher", require("./teacher"));
+router.use("/student", require("./student"));
+
 
 // get student info. the "/studentInfo" url part is just an example, can be changed anytime
 router.get("/studentInfo", function(req,res) {
@@ -73,7 +77,5 @@ router.get("/studentInfo", function(req,res) {
         })
     }
 })
-
-
 
 module.exports = router;
