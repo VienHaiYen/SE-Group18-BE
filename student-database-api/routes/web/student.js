@@ -1,25 +1,24 @@
-const { render } = require("ejs");
 var express = require("express");
 var passport = require("passport");
 var ensureAuthenticated = require("../../auth/auth").ensureAuthenticated;
 var student = require("../../models/student");
 var router = express.Router();
 
-router.get("/", function(req, res) {
-    res.render("home/student/index", {title: "home"});
-}); 
-router.get("/about", function(req, res) {
-    res.render("home/student/about", {title: "about"});
-}); 
+// router.get("/", function(req, res) {
+//     res.render("home/student/index", {title: "home"});
+// }); 
+// router.get("/about", function(req, res) {
+//     res.render("home/student/about", {title: "about"});
+// }); 
 
-router.get("/profile", ensureAuthenticated.ensureStudent, function(req, res) {
-    res.render("accounts/student/profile", {title: "profile"});
-});
+// router.get("/profile", ensureAuthenticated.ensureStudent, function(req, res) {
+//     res.render("accounts/student/profile", {title: "profile"});
+// });
 
 
-router.get("/login", function(req, res) {
-    res.render("accounts/student/login", {title: "login"});
-}); 
+// router.get("/login", function(req, res) {
+//     res.render("accounts/student/login", {title: "login"});
+// }); 
 
 router.get("/logout", function(req,res, next) {
     req.logout(function(err) {
@@ -35,9 +34,9 @@ router.post("/login", passport.authenticate("studentlogin", {
     successFlash:true
 }));
 
-router.get("/register", function(req, res) {
-    res.render("accounts/student/register", {title: "register"});
-}); 
+// router.get("/register", function(req, res) {
+//     res.render("accounts/student/register", {title: "register"});
+// }); 
 
 router.post("/register", function(req, res, next) {
     var studentID = req.body.studentID;
@@ -130,9 +129,9 @@ router.post("/register", function(req, res, next) {
     successFlash:true
 }));
 
-router.get("/edit", ensureAuthenticated.ensureStudent, function(req, res) {
-    res.render("accounts/student/edit", {title: "edit"});
-});
+// router.get("/edit", ensureAuthenticated.ensureStudent, function(req, res) {
+//     res.render("accounts/student/edit", {title: "edit"});
+// });
 
 router.post("/edit", ensureAuthenticated.ensureStudent, function(req, res, next) {
     student.findById(req.user.id, function(err, user) {
