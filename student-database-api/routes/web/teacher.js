@@ -1,8 +1,25 @@
+// const { render } = require("ejs");
 var express = require("express");
 var passport = require("passport");
 var ensureAuthenticated = require("../../auth/auth").ensureAuthenticated;
 var teacher = require("../../models/teacher");
 var router = express.Router();
+
+// router.get("/", function(req, res) {
+//     res.render("home/teacher/index", {title: "home"});
+// }); 
+// router.get("/about", function(req, res) {
+//     res.render("home/teacher/about", {title: "about"});
+// }); 
+
+// router.get("/profile", ensureAuthenticated.ensureTeacher, function(req, res) {
+//     res.render("accounts/teacher/profile", {title: "profile"});
+// });
+
+
+// router.get("/login", function(req, res) {
+//     res.render("accounts/teacher/login", {title: "login"});
+// }); 
 
 router.get("/logout", function(req,res, next) {
     req.logout(function(err) {
@@ -18,6 +35,9 @@ router.post("/login", passport.authenticate("teacherlogin", {
     successFlash:true
 }));
 
+// router.get("/register", function(req, res) {
+//     res.render("accounts/teacher/register", {title: "register"});
+// }); 
 
 router.post("/register", function(req, res, next) {
     var teacherID = req.body.teacherID;
@@ -109,6 +129,10 @@ router.post("/register", function(req, res, next) {
     failureFlash:true,
     successFlash:true
 }));
+
+// router.get("/edit", ensureAuthenticated.ensureTeacher, function(req, res) {
+//     res.render("accounts/teacher/edit", {title: "edit"});
+// });
 
 router.post("/edit", ensureAuthenticated.ensureTeacher, function(req, res, next) {
     teacher.findById(req.user.id, function(err, user) {

@@ -14,7 +14,7 @@ var ensureTeacher = function ensureAuthenticated(req, res, next) {
         next();
     } else {
         req.flash("info", "You are not logged in as a teacher");
-        res.redirect("/teacher/login");
+        res.redirect("/login/#");
     }
 }
 
@@ -23,7 +23,7 @@ var ensureStudent = function ensureAuthenticated(req, res, next) {
         next();
     } else {
         req.flash("info", "You are not logged in as a student");
-        res.redirect("/student/login");
+        res.redirect("/login/#");
     }
 }
 var ensureAdmin = function ensureAuthenticated(req, res, next) {
@@ -32,7 +32,7 @@ var ensureAdmin = function ensureAuthenticated(req, res, next) {
     } else {
         req.flash("info", "You are not logged in as an admin");
         console.log(req.user);
-        res.redirect("/admin/login");
+        res.redirect("/login/#");
     }
 }
 

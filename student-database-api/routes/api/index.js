@@ -6,6 +6,7 @@ const student = require("../../models/student");
 const teacher = require("../../models/teacher");
 
 router.use(express.json())
+
 // Link to other routers here
 
 router.get("/viewMoreInfo", function(req, res) {
