@@ -36,7 +36,7 @@ router.get("/studentInfo", function(req,res) {
         // var student = result.findOne({'studentID':`${studentID}`}, 
         // 'id role name birthday address gender mail phone subject');
 
-        result.findOne({'id':`${studentID}`}, 
+        result.findOne({id:`${studentID}`}, 
             'id role name birthday address gender mail phone subject', 
             function(err, result, next) {
                 // if error, fuck off

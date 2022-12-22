@@ -39,7 +39,7 @@ async function main() {
     await mongoose.connect(param.DATABASE);
 
     // call the function
-    createAccount(123, "123", "student");
+    createAccount("123", "123", "student");
 
     return 0;
 }

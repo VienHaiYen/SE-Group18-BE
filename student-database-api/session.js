@@ -3,46 +3,71 @@ const router = express();
 const uuidv4 = require("uuid").v4;
 const mongoose = require("mongoose");
 const account = require("./models/account");
+const passport = require("passport");
+const LocalStrategy = require("passport-local").Strategy;
 
 router.use(express.json());
 
 var sessions = [];
 
 router.post("/login", (req,res) => {
+
     var {id, password, role} = req.body;
-    var result = mongoose.model("result", account.schema);
+    var result = mongoose.model("account", account.schema);
 
     if (!id || !password || !role) {
-        res.status(418).send({
+        return res.status(418).send({
             "message" : "missing credentials"
         })
     }
 
-    result.findOne({"id":id, "password":password, "role" : role}, (err, result) => {
+    result.findOne({$and: [
+        {
+            'id': id
+        }, {
+            'role': role
+        }
+        ]}, function(err, user) {
         if (err) {
             return res.status(500).send({
                 "message" : "unexpected error"
             })
         }
 
-        if (!result) {
+        if (!user) {
             return res.status(401).send({
                 "message" : "Invalid credentials"
             })  
         }
+        user.checkPassword(password, (err, isMatch) => {
+            if (err) {
+                return res.status(500).send({
+                    "message" : "unexpected error"
+                })
+            }
 
-        const sessionId = uuidv4();
-        sessions[sessionId] = {id, userId: role};
-        res.set("Set-Cookie", `session=${sessionId}`);
-        console.log(`${id} logged in`);
-        return res.status(200).send({
-            "message" : "Logged in"
+            if (isMatch) {
+
+                const sessionId = uuidv4();
+                sessions[sessionId] = {id, userId: role};
+
+                res.set("Set-Cookie", `session=${sessionId}`);
+                console.log(`${id} logged in`);
+                return res.status(200).send({
+                    "message" : "Logged in"
+                })
+            }
+            else {
+                return res.status(200).send({
+                    "message" : "Invalid credentials"
+                })
+            }
         })
-
     })
 })  
 
 router.post("/logout", (req, res) => {
+    console.log(sessions)
     var sessionId = req.header.cookie?.split('=')[1];
 
     const userSession = sessions[sessionId];
@@ -58,3 +83,5 @@ router.post("/logout", (req, res) => {
         "message" : "Logged out"
     })
 })
+
+module.exports = router;
