@@ -9,7 +9,7 @@ const flash = require("connect-flash");
 
 // Custom-made modules
 const param = require("./params/params");
-const setuppassport = require("./setuppasssport");
+// const session = require("./session");
 
 
 // Temporary port
@@ -19,7 +19,7 @@ const Port = 55000;
 // Connect to the database that store user's account info mation
 var app = express();
 mongoose.connect(param.DATABASE);
-// setuppassport();
+// session();
 
 app.set("port", process.env.PORT || Port); // localhost:Port, use the 'express' module
 app.use(bodyparser.urlencoded({extended:false})); // To access the information in the body of a POST request
@@ -36,6 +36,7 @@ app.use(flash());
 
 // app.use("/", require("./routes/web"));
 app.use("/api", require("./routes/api"));
+app.use("/", require("./session"))
 
 
 

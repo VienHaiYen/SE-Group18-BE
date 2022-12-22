@@ -22,53 +22,53 @@ router.post("/addStudent", function(req, res, next) {
     var role = "student";
     
     if (!studentID) {
-        req.flash("error", "Please fill in an ID");
+        // req.flash("error", "Please fill in an ID");
         return next();
     }
     if (!email) {
-        req.flash("error", "Please fill in an email");
+        // req.flash("error", "Please fill in an email");
         return next();
     }
     if (!firstname || !lastname) {
-        req.flash("error", "Please fill in your full name");
+        // req.flash("error", "Please fill in your full name");
         return next();
     }
     if(!birthday) {
-        req.flash("error", "Please fill in your birthday");
+        // req.flash("error", "Please fill in your birthday");
         return next();
     }
     if (!phoneNumber ) {
-        req.flash("error", "Please fill in a phone number");
+        // req.flash("error", "Please fill in a phone number");
         return next();
     }
     if (!password) {
-        req.flash("error", "Please fill in a password");
+        // req.flash("error", "Please fill in a password");
         return next();
     }
     if (password != repassword) {
-        req.flash("error", "Password does not match");
+        // req.flash("error", "Password does not match");
         return next();
     }
 
     student.findOne({studentID:studentID}, function(err, user) {
         if (err) {return next(err);}
         if (user) {
-            req.flash("error", "ID's already existed");
-            return res.redirect("/addStudent");
+            // req.flash("error", "ID's already existed");
+            return next();
         }
 
         student.findOne({email:email}, function(err, user) {
             if (err) {return next(err);}
             if (user) {
-                req.flash("error", "There's already an account with this email");
-                return res.redirect("/addStudent");
+                // req.flash("error", "There's already an account with this email");
+                return next();
             }
 
             student.findOne({phoneNumber:phoneNumber}, function(err, user) {
                 if (err) {return next(err);}
                 if (user) {
-                    req.flash("error", "There's already an account with this phone number");
-                    return res.redirect("/addStudent");
+                    // req.flash("error", "There's already an account with this phone number");
+                    return next();
                 }
                 var newStudent = new student({
                     username:studentID,

@@ -3,6 +3,6 @@ var classListSchema = new mongoose.Schema({
     
 });
 
-var ClassList = mongoose.model("Schoolyear", classListSchema);
+var ClassList = mongoose.model("classList", classListSchema);
 
-module.exports = ClassList
+module.exports = ClassList;

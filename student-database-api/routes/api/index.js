@@ -28,7 +28,7 @@ router.use(require("./student"));
 router.get("/studentInfo", function(req,res) {
     var studentID = req.body.id;
     if (studentID) {
-        var result = mongoose.model('result', student.schema);
+        var result = mongoose.model('result', user.schema);
 
         // get Student Info from database function here
         // example:
