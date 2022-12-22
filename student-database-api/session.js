@@ -65,21 +65,63 @@ router.post("/login", (req,res) => {
 })  
 
 router.post("/logout", (req, res) => {
-    console.log(sessions)
-    var sessionId = req.header.cookie?.split('=')[1];
-
-    const userSession = sessions[sessionId];
-    if (!userSession) {
+    if (!ensureAuthenticated(req, res)) {
         return res.status(401).send({
-            "message" : "Invalid sessions"
+            "message" : "You are not logged in"
         })
-    }
-
+    };
+    var sessionId = req.headers.cookie?.split('=')[1];
     delete sessions[sessionId];
     res.set('Set-Cookie', 'session=; expires=Thu, 01 Jan 1970 00:00:00 GMT');
     return res.status(200).send({
         "message" : "Logged out"
     })
 })
+
+// middleware to check user type
+
+function ensureAuthenticated(req, res, next) {
+    var sessionId = req.headers.cookie?.split('=')[1];
+    const userSession = sessions[sessionId];
+    if (!userSession) {
+        return false
+    }
+    else {
+        return true;
+    }
+}
+
+function enSureAdmin(req, res, next) {
+    var sessionId = req.headers.cookie?.split('=')[1];
+    const userSession = sessions[sessionId];
+    if (!(userSession.userId == "Admin")) {
+        return false;
+    }
+    else {
+        return true;
+    }
+}
+
+function ensureTeacher(req, res, next) {
+    var sessionId = req.headers.cookie?.split('=')[1];
+    const userSession = sessions[sessionId];
+    if (!(userSession.userId == "Teacher")) {
+        return false;
+    }
+    else {
+        return true;
+    }
+}
+
+function ensureStudent(req, res, next) {
+    var sessionId = req.headers.cookie?.split('=')[1];
+    const userSession = sessions[sessionId];
+    if (!(userSession.userId == "Student")) {
+        return false;
+    }
+    else {
+        return true;
+    }
+}
 
 module.exports = router;

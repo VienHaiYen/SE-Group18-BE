@@ -2,96 +2,34 @@
 
 const express = require("express");
 const { default: mongoose } = require("mongoose");
+const Account = require("../../models/account");
 const router = express.Router();
-const user = require("../../models/info");
-const ensureAuth = require("../../auth/auth").ensureAuthenticated;
+const info = require("../../models/info");
+const poster = require("../package/postFunctions").controller;
+const getter = require("../package/getFunctions").controller;
 
 router.use(express.json());
 // router.use(ensureAuth.ensureAdmin());
 
-router.post("/addStudent", function(req, res, next) {
-    var studentID = req.body.studentID;
-    var email = req.body.email;
-    var firstname = req.body.firstname;
-    var lastname = req.body.lastname;
-    var birthday = req.body.birthday;
-    var gender = req.body.gender;
-    var phoneNumber = req.body.phoneNumber;
-    var password = req.body.password;
-    var repassword = req.body.repassword;
+router.post("/input-student", function(req, res, next) {
+    var id = req.user.id;
     var role = "student";
+    var name = req.user.name;
+    var birthday = req.user.birthday;
+    var address = req.user.address;
+    var gender = req.user.gender;
+    var mail = req.user.mail;
+    var phone = req.user.phone;
     
-    if (!studentID) {
-        // req.flash("error", "Please fill in an ID");
-        return next();
-    }
-    if (!email) {
-        // req.flash("error", "Please fill in an email");
-        return next();
-    }
-    if (!firstname || !lastname) {
-        // req.flash("error", "Please fill in your full name");
-        return next();
-    }
-    if(!birthday) {
-        // req.flash("error", "Please fill in your birthday");
-        return next();
-    }
-    if (!phoneNumber ) {
-        // req.flash("error", "Please fill in a phone number");
-        return next();
-    }
-    if (!password) {
-        // req.flash("error", "Please fill in a password");
-        return next();
-    }
-    if (password != repassword) {
-        // req.flash("error", "Password does not match");
-        return next();
-    }
+    poster.createProfile(id, role, name, birthday, address, gender, mail, phone, null);
+    poster.createAccount(id, id, role);
+})
 
-    student.findOne({studentID:studentID}, function(err, user) {
-        if (err) {return next(err);}
-        if (user) {
-            // req.flash("error", "ID's already existed");
-            return next();
-        }
+router.get("/rule", function(req, res) {
 
-        student.findOne({email:email}, function(err, user) {
-            if (err) {return next(err);}
-            if (user) {
-                // req.flash("error", "There's already an account with this email");
-                return next();
-            }
+})
 
-            student.findOne({phoneNumber:phoneNumber}, function(err, user) {
-                if (err) {return next(err);}
-                if (user) {
-                    // req.flash("error", "There's already an account with this phone number");
-                    return next();
-                }
-                var newStudent = new student({
-                    username:studentID,
-                    adminID:studentID,
-                    role:role,
-                    password:password,
-                    email:email,
-                    fullname:{
-                        firstname:firstname,
-                        lastname:lastname
-                    },
-                    birthday:birthday,
-                    gender:gender,
-                    phoneNumber:phoneNumber
-            })
+router.post("/rule", function(req, res, next) {
     
-
-            newStudent.save(next);
-            });
-    
-    
-        });
-    }
-)
 })
 module.exports = router;

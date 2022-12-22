@@ -3,20 +3,14 @@
 const express = require("express");
 const { default: mongoose } = require("mongoose");
 const router = express.Router();
-const user = require("../../models/info");
-const ensureAuth = require("../../auth/auth").ensureAuthenticated;
+const info = require("../../models/info");
 const grade = require("../../models/grade");
+const poster = require("../package/postFunctions").controller;
+const getter = require("../package/getFunctions").controller;
 
 
 router.use(express.json());
 // router.use(ensureAuth.ensureTeacher());
-
-router.get("/about", function(req, res) {
-
-})
-
-router.get("/grade", function(req,res) {
-    })
 
 router.post("/input-grade", function(req,res, next) {
 

@@ -3,8 +3,9 @@
 const express = require("express");
 const { default: mongoose } = require("mongoose");
 const router = express.Router();
-const user = require("../../models/info");
-const ensureAuth = require("../../auth/auth").ensureAuthenticated;
+const info = require("../../models/info");
+const poster = require("../package/postFunctions").controller;
+const getter = require("../package/getFunctions").controller;
 
 router.use(express.json());
 // Link to other routers here
@@ -23,60 +24,20 @@ router.use(require("./admin"));
 router.use(require("./teacher"));
 router.use(require("./student"));
 
+router.get("/grade", (req, res) => {
 
-// get student info. the "/studentInfo" url part is just an example, can be changed anytime
-router.get("/studentInfo", function(req,res) {
-    var studentID = req.body.id;
-    if (studentID) {
-        var result = mongoose.model('result', user.schema);
+}) 
 
-        // get Student Info from database function here
-        // example:
+router.get("/about", (req, res) => {
 
-        // var student = result.findOne({'studentID':`${studentID}`}, 
-        // 'id role name birthday address gender mail phone subject');
+})
 
-        result.findOne({id:`${studentID}`}, 
-            'id role name birthday address gender mail phone subject', 
-            function(err, result, next) {
-                // if error, fuck off
-                if (err) {
-                    res.status(500).send({
-                        "message":"unexpected error"
-                    })
-                    return next(err);
-                }
+router.get("/teacher-schedule", (req, res) => {
 
-                // record not found
-                if (!result) {
-                    res.status(404).send({
-                        "message":"record not found"
-                    })
-                    return null;
-                }
+})
 
-                // found record
-                res.status(200).send({
-                    "info": {
-                        "id": `${result.id}`,
-                        "role": `${result.role}`,
-                        "name": `${result.name}`,
-                        "birthday": `${result.birthday}`,
-                        "address": `${result.address}`,
-                        "gender": `${result.gender}`,
-                        "mail": `${result.mail}`,
-                        "phone": `${result.phone}`,
-                        "subject": `${result.subject}`
-                    }
-                })
-            }
-        )      
-    }
-    else {
-        res.status(418).send({
-            "message":"invalid ID"
-        })
-    }
+router.get("/class-list", (req, res) => {
+    
 })
 
 module.exports = router;

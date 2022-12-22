@@ -15,7 +15,7 @@ var infoSchema = new mongoose.Schema({
     role:{
         type:String,
     },
-    fullname:{
+    name:{
         type: String,
         required: true
 
