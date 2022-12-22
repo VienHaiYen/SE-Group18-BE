@@ -1,3 +1,5 @@
+// admin schema
+
 var bcrypt = require("bcryptjs");
 var mongoose = require("mongoose");
 var passportLocalMongoose = require("passport-local-mongoose");
@@ -13,7 +15,7 @@ var adminSchema = new mongoose.Schema({
         required:true,
         unique:true
     },
-    adminID:{type:String, required:true, unique:true},
+    id:{type:String, required:true, unique:true},
     email:{type:String, required:true, unique:true},
     password:{type:String, required:true},
     fullname:{
@@ -37,11 +39,10 @@ var adminSchema = new mongoose.Schema({
          type:String,
          required:true
      },
-     accountType:{
+     role:{
          type:String,
          default:"admin",
-     },
-    createAt:{type:String, default:Date.now}
+     }
 });
 
 // Encrypt the password, or HASH the password

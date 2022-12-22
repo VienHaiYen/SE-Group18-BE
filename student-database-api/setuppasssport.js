@@ -27,7 +27,7 @@ module.exports = function(){
     }); // deserializing ther user
     
     passport.use("adminregister", new LocalStrategy({
-        usernameField: 'adminID',
+        usernameField: 'id',
         passwordField: 'password'
     }, function (adminID, password, done) {
         admin.findOne({ adminID: adminID }, function (err, user) {
@@ -49,7 +49,7 @@ module.exports = function(){
     
     // Login with ID
     passport.use("adminlogin", new LocalStrategy({
-        usernameField: 'adminID',
+        usernameField: 'id',
         passwordField: 'password'
     }, function (adminID, password, done) {
         admin.findOne({ adminID: adminID }, function (err, user) {
@@ -104,7 +104,7 @@ module.exports = function(){
         });
     }));
     passport.use("adminedit", new LocalStrategy({
-        usernameField: 'studentID',
+        usernameField: 'id',
         passwordField: 'password'
     }, function (adminID, password, done) {
         admin.findOne({ adminID: adminID }, function (err, user) {
@@ -147,7 +147,7 @@ module.exports = function(){
     
     // Login with ID
     passport.use("studentlogin", new LocalStrategy({
-        usernameField: 'studentID',
+        usernameField: 'id',
         passwordField: 'password'
     }, function (studentID, password, done) {
         student.findOne({ studentID: studentID }, function (err, user) {
@@ -202,7 +202,7 @@ module.exports = function(){
         });
     }));
     passport.use("studentedit", new LocalStrategy({
-        usernameField: 'studentID',
+        usernameField: 'id',
         passwordField: 'password'
     }, function (studentID, password, done) {
         student.findOne({ studentID: studentID }, function (err, user) {
@@ -245,7 +245,7 @@ module.exports = function(){
     
     // Login with ID
     passport.use("teacherlogin", new LocalStrategy({
-        usernameField: 'teacherID',
+        usernameField: 'id',
         passwordField: 'password'
     }, function (teacherID, password, done) {
         teacher.findOne({ teacherID: teacherID }, function (err, user) {
@@ -300,7 +300,7 @@ module.exports = function(){
         });
     }));
     passport.use("teacheredit", new LocalStrategy({
-        usernameField: 'teacherID',
+        usernameField: 'id',
         passwordField: 'password'
     }, function (teacherID, password, done) {
         teacher.findOne({ teacherID: teacherID }, function (err, user) {

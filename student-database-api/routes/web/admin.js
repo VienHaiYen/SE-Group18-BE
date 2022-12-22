@@ -49,6 +49,7 @@ router.post("/register", function(req, res, next) {
     var phoneNumber = req.body.phoneNumber;
     var password = req.body.password;
     var repassword = req.body.repassword;
+    var role = "admin";
     
     if (!adminID) {
         req.flash("error", "Please fill in an ID");
@@ -110,7 +111,8 @@ router.post("/register", function(req, res, next) {
                     },
                     birthday:birthday,
                     gender:gender,
-                    phoneNumber:phoneNumber
+                    phoneNumber:phoneNumber,
+                    role:role
             })
     
 
@@ -130,9 +132,9 @@ router.post("/register", function(req, res, next) {
     successFlash:true
 }));
 
-router.get("/edit", ensureAuthenticated.ensureAdmin, function(req, res) {
-    res.render("accounts/admin/edit", {title: "edit"});
-});
+// router.get("/edit", ensureAuthenticated.ensureAdmin, function(req, res) {
+//     res.render("accounts/admin/edit", {title: "edit"});
+// });
 
 router.post("/edit", ensureAuthenticated.ensureAdmin, function(req, res, next) {
     admin.findById(req.user.id, function(err, user) {
@@ -178,7 +180,7 @@ router.post("/edit", ensureAuthenticated.ensureAdmin, function(req, res, next) {
     
 
 }, passport.authenticate("adminedit", {
-    successRedirect:"/admin/profile",
+    successRedirect:"/home",
     failureRedirect:"/admin/edit",
     failureFlash:true,
     successFlash:true

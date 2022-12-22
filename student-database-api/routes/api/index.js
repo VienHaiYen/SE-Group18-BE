@@ -1,11 +1,15 @@
+// API INDEX FILE
+
 const express = require("express");
 const { default: mongoose } = require("mongoose");
 const router = express.Router();
 const admin = require("../../models/admin");
 const student = require("../../models/student");
 const teacher = require("../../models/teacher");
+const ensureAuth = require("../../auth/auth").ensureAuthenticated;
 
-router.use(express.json())
+router.use(express.json());
+router.use(ensureAuth.ensureAuth());
 
 // Link to other routers here
 
@@ -26,7 +30,7 @@ router.use("/student", require("./student"));
 
 // get student info. the "/studentInfo" url part is just an example, can be changed anytime
 router.get("/studentInfo", function(req,res) {
-    const studentID = req.body.id;
+    var studentID = req.body.id;
     if (studentID) {
         var result = mongoose.model('result', student.schema);
 
@@ -36,7 +40,7 @@ router.get("/studentInfo", function(req,res) {
         // var student = result.findOne({'studentID':`${studentID}`}, 
         // 'id role name birthday address gender mail phone subject');
 
-        result.findOne({'studentID':`${studentID}`}, 
+        result.findOne({'id':`${studentID}`}, 
             'id role name birthday address gender mail phone subject', 
             function(err, result, next) {
                 // if error, fuck off
