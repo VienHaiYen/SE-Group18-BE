@@ -36,7 +36,7 @@ router.post("/login", (req,res) => {
         res.set("Set-Cookie", `session=${sessionId}`);
         console.log(`${id} logged in`);
         return res.status(200).send({
-            "message" : "success"
+            "message" : "Logged in"
         })
 
     })
@@ -45,4 +45,16 @@ router.post("/login", (req,res) => {
 router.post("/logout", (req, res) => {
     var sessionId = req.header.cookie?.split('=')[1];
 
+    const userSession = sessions[sessionId];
+    if (!userSession) {
+        return res.status(401).send({
+            "message" : "Invalid sessions"
+        })
+    }
+
+    delete sessions[sessionId];
+    res.set('Set-Cookie', 'session=; expires=Thu, 01 Jan 1970 00:00:00 GMT');
+    return res.status(200).send({
+        "message" : "Logged out"
+    })
 })
