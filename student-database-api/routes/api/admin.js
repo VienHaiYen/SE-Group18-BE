@@ -3,13 +3,11 @@
 const express = require("express");
 const { default: mongoose } = require("mongoose");
 const router = express.Router();
-const admin = require("../../models/admin");
-const student = require("../../models/student");
-const teacher = require("../../models/teacher");
+const user = require("../../models/info");
 const ensureAuth = require("../../auth/auth").ensureAuthenticated;
 
 router.use(express.json());
-router.use(ensureAuth.ensureAdmin());
+// router.use(ensureAuth.ensureAdmin());
 
 router.post("/addStudent", function(req, res, next) {
     var studentID = req.body.studentID;
@@ -25,31 +23,31 @@ router.post("/addStudent", function(req, res, next) {
     
     if (!studentID) {
         req.flash("error", "Please fill in an ID");
-        return res.redirect("/addStudent");
+        return next();
     }
     if (!email) {
         req.flash("error", "Please fill in an email");
-        return res.redirect("/addStudent");
+        return next();
     }
     if (!firstname || !lastname) {
         req.flash("error", "Please fill in your full name");
-        return res.redirect("/addStudent");
+        return next();
     }
     if(!birthday) {
         req.flash("error", "Please fill in your birthday");
-        return res.redirect("/addStudent");
+        return next();
     }
     if (!phoneNumber ) {
         req.flash("error", "Please fill in a phone number");
-        return res.redirect("/addStudent");
+        return next();
     }
     if (!password) {
         req.flash("error", "Please fill in a password");
-        return res.redirect("/addStudent");
+        return next();
     }
     if (password != repassword) {
         req.flash("error", "Password does not match");
-        return res.redirect("/addStudent")
+        return next();
     }
 
     student.findOne({studentID:studentID}, function(err, user) {

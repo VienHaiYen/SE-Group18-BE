@@ -19,7 +19,7 @@ const Port = 55000;
 // Connect to the database that store user's account info mation
 var app = express();
 mongoose.connect(param.DATABASE);
-setuppassport();
+// setuppassport();
 
 app.set("port", process.env.PORT || Port); // localhost:Port, use the 'express' module
 app.use(bodyparser.urlencoded({extended:false})); // To access the information in the body of a POST request

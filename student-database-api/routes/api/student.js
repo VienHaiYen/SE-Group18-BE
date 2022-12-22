@@ -3,12 +3,10 @@
 const express = require("express");
 const { default: mongoose } = require("mongoose");
 const router = express.Router();
-const admin = require("../../models/admin");
-const student = require("../../models/student");
-const teacher = require("../../models/teacher");
+const user = require("../../models/info");
 const ensureAuth = require("../../auth/auth").ensureAuthenticated;
 
 router.use(express.json())
-router.use(ensureAuth.ensureStudent());
+// router.use(ensureAuth.ensureStudent());
 
 module.exports = router;

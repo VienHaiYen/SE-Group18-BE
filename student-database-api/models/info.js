@@ -1,51 +1,56 @@
+// info schema
+
 var bcrypt = require("bcryptjs");
 var mongoose = require("mongoose");
 var passportLocalMongoose = require("passport-local-mongoose");
 
 // Basically a factor that play a part in the HASH
 // or encrypt function
-const SALT_FACTOR = 11;
+const SALT_FACTOR = 10;
 
 // The schema of the account info
-var teacherSchema = new mongoose.Schema({
+var infoSchema = new mongoose.Schema({
     username:{
         type:String,
         required:true,
         unique:true
     },
-    id:{type:String, required:true, unique:true},
-    email:{type:String, required:true, unique:true},
-    password:{type:String, required:true},
+    id:{
+        type:String, required:true, unique:true
+    },
+    role:{
+        type:String,
+    },
     fullname:{
-        firstname:{
-            type:String, required:true
-        },
-        lastname:{
-            type:String, required:true
-        }
+        type: String,
+        required: true
+
     },
     birthday: {
         type:String,
         required: true
+    },
+    address: {
+        type:String
     },
     gender: {
         type: String,
         enum: ["male", "female"],
         required:true
     },
-    phoneNumber:{
+    mail:{type:String, required:true, unique:true},
+    phone:{
         type:String,
         required:true
     },
-    role:{
+    subject: {
         type:String,
-        default:"teacher",
-    },
-    createAt:{type:String, default:Date.now}
+        default:null
+    }
 });
 
 // Encrypt the password, or HASH the password
-teacherSchema.pre("save", function(done) {
+infoSchema.pre("save", function(done) {
     var user = this;
 
     if (!user.isModified("password")) {
@@ -66,7 +71,7 @@ teacherSchema.pre("save", function(done) {
     });
 });
 
-teacherSchema.methods.checkPassword = function(guess, done) {
+infoSchema.methods.checkPassword = function(guess, done) {
     // If a password is provided, then check
     if (this.password != null) {
         bcrypt.compare(guess, this.password, function(err, isMatch){
@@ -75,8 +80,8 @@ teacherSchema.methods.checkPassword = function(guess, done) {
     }
 }
 
-teacherSchema.plugin(passportLocalMongoose, {usernameQueryFields: ["email"]});
+infoSchema.plugin(passportLocalMongoose, {usernameQueryFields: ["email"]});
 
-var Teacher = mongoose.model("Teacher", teacherSchema);
+var Admin = mongoose.model("admin", infoSchema);
 
-module.exports = Teacher;
+module.exports = Admin;

@@ -3,14 +3,10 @@
 const express = require("express");
 const { default: mongoose } = require("mongoose");
 const router = express.Router();
-const admin = require("../../models/admin");
-const student = require("../../models/student");
-const teacher = require("../../models/teacher");
+const user = require("../../models/info");
 const ensureAuth = require("../../auth/auth").ensureAuthenticated;
 
 router.use(express.json());
-router.use(ensureAuth.ensureAuth());
-
 // Link to other routers here
 
 router.get("/viewMoreInfo", function(req, res) {
@@ -23,9 +19,9 @@ router.get("/viewMoreInfo", function(req, res) {
     })
 })
 
-router.use("/admin", require("./admin"));
-router.use("/teacher", require("./teacher"));
-router.use("/student", require("./student"));
+router.use(require("./admin"));
+router.use(require("./teacher"));
+router.use(require("./student"));
 
 
 // get student info. the "/studentInfo" url part is just an example, can be changed anytime
