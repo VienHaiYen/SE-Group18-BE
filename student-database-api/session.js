@@ -3,8 +3,6 @@ const router = express();
 const uuidv4 = require("uuid").v4;
 const mongoose = require("mongoose");
 const account = require("./models/account");
-const passport = require("passport");
-const LocalStrategy = require("passport-local").Strategy;
 
 router.use(express.json());
 
