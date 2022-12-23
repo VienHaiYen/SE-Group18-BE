@@ -21,13 +21,13 @@ var pointSchema = new mongoose.Schema({
             _gk:{type:Number},
             _ck:{type:Number}
         },
-        Anh:{
-            mieng:[Number],
-            _15:[Number],
-            _45:[Number],
-            _gk:{type:Number},
-            _ck:{type:Number}
-        },
+        // Anh:{
+        //     mieng:[Number],
+        //     _15:[Number],
+        //     _45:[Number],
+        //     _gk:{type:Number},
+        //     _ck:{type:Number}
+        // },
         Li:{
             mieng:[Number],
             _15:[Number],
@@ -63,20 +63,21 @@ var pointSchema = new mongoose.Schema({
             _gk:{type:Number},
             _ck:{type:Number}
         },
-        GDCD:{
+        DaoDuc:{
             mieng:[Number],
             _15:[Number],
             _45:[Number],
             _gk:{type:Number},
             _ck:{type:Number}
         },
-        CongNghe:{
-            mieng:[Number],
-            _15:[Number],
-            _45:[Number],
-            _gk:{type:Number},
-            _ck:{type:Number}
-        },
+        
+        // CongNghe:{
+        //     mieng:[Number],
+        //     _15:[Number],
+        //     _45:[Number],
+        //     _gk:{type:Number},
+        //     _ck:{type:Number}
+        // },
         TD:{type:String, enum:['D', 'KD']}
     }
 })
