@@ -1,7 +1,7 @@
 ﻿# Do an NMCNPM
 
 Back-end code for database handling
- - params               :   link to the database, not yet established.
+ - params               :   link to the database.
  - routes               :   connect back-end and front-end, define POST and GET functions.
  - node_modules         :   just don't open it and forget that it exist, you'll be fine.
  - app.js               :   pretty much the equivalent of the main() function.
