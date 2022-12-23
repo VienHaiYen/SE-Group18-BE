@@ -33,6 +33,11 @@ function createAccount(ID, PASSWORD, ROLE) {
     newAcc.save();
 }
 
+//define Fucntion to create an student
+function createStudent(){
+
+}
+
 async function main() {
 
     // connect to mongoDB
