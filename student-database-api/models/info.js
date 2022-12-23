@@ -14,6 +14,8 @@ var infoSchema = new mongoose.Schema({
     },
     role:{
         type:String,
+        enum:["student","teacher","admin"],
+        require:true
     },
     name:{
         type: String,
