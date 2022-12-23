@@ -33,9 +33,63 @@ function createAccount(ID, PASSWORD, ROLE) {
     newAcc.save();
 }
 
-//define Fucntion to create an student
-function createStudent(){
+// `//define Fucntion to create an student
+// function createStudent(ID){
+//     //define "grade" is a schema of " Grade"
+//     const grade= mongoose.model("grade",Grade.schema);
+//     var newGrade=new grade({
+//         id: ID,
+//         result: {
+//             Toan:{
 
+
+//             }
+//         }
+
+        
+//     })   ; 
+
+// }
+
+function createInfo(USERNAME, ID, ROLE, NAME, BIRTHDAY, ADDRESS, GENDER, MAIL, PHONE, SUBJECT)
+{
+    const info=mongoose.model("info",Info.schema);
+    if(ROLE=="student")
+    {var newInfo=new info({
+        username: USERNAME,
+        id:ID,
+        role:ROLE,
+        name:NAME,
+        birthday:BIRTHDAY,
+        address:ADDRESS,
+        gender:GENDER,
+        mail:MAIL,
+        phone:PHONE,
+     
+
+    });}
+    if (ROLE=="teacher")
+    {
+        var newInfo=new info({
+            username: USERNAME,
+            id:ID,
+            role:ROLE,
+            name:NAME,
+            birthday:BIRTHDAY,
+            address:ADDRESS,
+            gender:GENDER,
+            mail:MAIL,
+            phone:PHONE,
+         
+    
+        });
+    }
+    newInfo.save();
+}
+
+function createRule(numStuent,numClass,Age)
+{
+    
 }
 
 async function main() {
@@ -44,13 +98,7 @@ async function main() {
     await mongoose.connect(param.DATABASE);
 
     // call the function
-    createAccount("123", "123", "student");
-
+    createAccount("123", "123", "student"); 
+    createInfo("thinh","123","thinh","04/05/2002","HO CHI MINH","male","thinhngo04052002@gmail.com",null);
     return 0;
 }
-
-
-
-
-
-
