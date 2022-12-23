@@ -162,7 +162,7 @@ function createTeacherSchedule(id, tkb) {
 function updateTeacherSchedule(id, result) {
 
 }
-
+// NEED FIXING
 // Create Class function
 function createClass(id, className, member) {
     const _class = mongoose.model("class", Class.schema);
@@ -198,7 +198,7 @@ function createClass(id, className, member) {
 function updateClass(id, className, member) {
 
 }
-
+// NEED FIXING
 // create Grade function
 function createGrade(id, result) {
     const grade = mongoose.model("grade", Grade.schema);
@@ -223,7 +223,7 @@ function createGrade(id, result) {
     }   
 }
 
-
+// NEED FIXING
 // Update Greade Function
 function updateGrade(id, result) {
     const grade = mongoose.model("grade", Grade.schema);
@@ -242,7 +242,7 @@ function updateGrade(id, result) {
     }
 }
 
-
+// NEED FIXING
 // Create Rule Function
 function createRule(numberOfStudent, numberOfClass, age) {
     const rule = mongoose.model("rule", Rule.schema);

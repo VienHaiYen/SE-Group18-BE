@@ -54,8 +54,7 @@ function createAccount(ID, PASSWORD, ROLE) {
 function createInfo(USERNAME, ID, ROLE, NAME, BIRTHDAY, ADDRESS, GENDER, MAIL, PHONE, SUBJECT)
 {
     const info=mongoose.model("info",Info.schema);
-    if(ROLE=="student")
-    {var newInfo=new info({
+    var newInfo=new info({
         username: USERNAME,
         id:ID,
         role:ROLE,
@@ -65,25 +64,8 @@ function createInfo(USERNAME, ID, ROLE, NAME, BIRTHDAY, ADDRESS, GENDER, MAIL, P
         gender:GENDER,
         mail:MAIL,
         phone:PHONE,
-     
-
-    });}
-    if (ROLE=="teacher")
-    {
-        var newInfo=new info({
-            username: USERNAME,
-            id:ID,
-            role:ROLE,
-            name:NAME,
-            birthday:BIRTHDAY,
-            address:ADDRESS,
-            gender:GENDER,
-            mail:MAIL,
-            phone:PHONE,
-         
-    
-        });
-    }
+        subject: SUBJECT
+    });
     newInfo.save();
 }
 
