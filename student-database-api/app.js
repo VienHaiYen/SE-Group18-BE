@@ -36,7 +36,7 @@ app.use(flash());
 
 // app.use("/", require("./routes/web"));
 app.use("/api", require("./routes/api"));
-app.use("/", require("./session"))
+app.use("/", require("./session").session)
 
 
 

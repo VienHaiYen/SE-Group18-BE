@@ -22,7 +22,8 @@ router.post("/login", (req,res) => {
     result.findOne({$and: [
         {
             'id': id
-        }, {
+        }, 
+        {
             'role': role
         }
         ]}, function(err, user) {
@@ -124,4 +125,7 @@ function ensureStudent(req, res, next) {
     }
 }
 
-module.exports = router;
+module.exports = {
+    session : router,
+    auth : {ensureAuthenticated, enSureAdmin, ensureTeacher, ensureStudent}
+};
