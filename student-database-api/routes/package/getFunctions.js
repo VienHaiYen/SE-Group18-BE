@@ -25,7 +25,7 @@ function getInfo(id, role) {
     })
     return result;
 }
-
+// NEED FIXING
 function getTeacherSchedule(id) {
     const teacherShedule = mongoose.model("scheduleTeacher", teacher_schedule.schema);
 
@@ -35,7 +35,7 @@ function getTeacherSchedule(id) {
         return result;
     })
 }
-
+// NEED FIXING
 function getClass(id) {
     const _class = mongoose.model("class", Class.schema);
     var result = _class.findOne({"id" : id}, (err, result) => {
@@ -45,7 +45,7 @@ function getClass(id) {
     })
     return result;
 }
-
+// NEED FIXING
 function getGrade(id) {
     const grade = mongoose.model("grade", Grade.schema);
     var result = grade.findOne({"id" : id}, (err, result) => {
