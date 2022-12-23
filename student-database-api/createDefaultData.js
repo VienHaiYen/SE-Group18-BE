@@ -69,10 +69,29 @@ function createInfo(USERNAME, ID, ROLE, NAME, BIRTHDAY, ADDRESS, GENDER, MAIL, P
     newInfo.save();
 }
 
-function createRule(numStuent,numClass,Age)
+function createRule(numStudent,numStudent_max,numClass10,numClass11,numClass12,ageMax,ageMin)
 {
-    
+    const rule=mongoose.model("rule",Rule.schema);
+    var newRule=new rule({
+        numberOfStudent: {
+            min:numStudent,
+            max:numStudent_max
+        },
+        numberOfClass:{
+
+            _10:numClass10,
+            _11:numClass11,
+            _12:numClass12
+
+        },
+        age:{
+            min:ageMin,
+            max:ageMax
+        }
+    });
+    newRule.save();
 }
+
 
 async function main() {
 
