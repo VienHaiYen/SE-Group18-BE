@@ -6,10 +6,12 @@ const Class = require("../../models/class");
 const Grade = require("../../models/grade");
 const Info = require("../../models/info");
 const Rule = require("../../models/rule");
-const Schoolyear = require("../../models/schoolyear");
+const SchoolYear = require("../../models/schoolyear");
+const Teacher_schedule = require("../../models/schedule_teacher");
 const getter = require("./getFunctions").controller;
 
 
+// Create new account function
 function createAccount(ID, PASSWORD, ROLE) {
     const acc = mongoose.model("account", Account.schema);
 
@@ -35,6 +37,13 @@ function createAccount(ID, PASSWORD, ROLE) {
     return msg;
 }
 
+// Update account function
+// MISSING
+function updateAccount(ID, PASSWORD, ROLE) {
+
+}
+
+// Create new Profile for account function
 function createProfile(id, role, name, birthday, address, gender, mail, phone, subject) {
 
     if (!id) {
@@ -73,21 +82,21 @@ function createProfile(id, role, name, birthday, address, gender, mail, phone, s
         if (err) {return err;}
         if (result) {
             // req.flash("error", "ID's already existed");
-            return "ID's already existed";
+            return "Dupplicate student ID";
         }
 
         info.findOne({"mail":mail}, function(err, result) {
             if (err) {return err;}
             if (result) {
                 // req.flash("error", "There's already an account with this email");
-                return "There's already an account with this email";
+                return "Dupplicate email";
             }
 
             info.findOne({"phone":phone}, function(err, result) {
                 if (err) {return err;}
                 if (result) {
                     // req.flash("error", "There's already an account with this phone number");
-                    return "There's already an account with this phone number";
+                    return "Dupplicate phone number";
                 }
             });    
         });
@@ -119,6 +128,42 @@ function createProfile(id, role, name, birthday, address, gender, mail, phone, s
     return msg;
 }
 
+// Update profile function
+// MISSING
+function updateProfile(id, role, name, birthday, address, gender, mail, phone, subject) {
+
+}
+
+// Create Teacher Schedule function
+function createTeacherSchedule(id, tkb) {
+    const teacher_schedule = mongoose.model("scheduleTeacher", Teacher_schedule.schema);
+
+    var check = getter.getTeacherSchedule(id);
+    if (check instanceof Error) {
+        return check;
+    }
+
+    if (check != null) {
+        msg = "Dupplicate ID"
+        return msg;
+    } else {
+        var newSchedule = new teacher_schedule({
+            id : id,
+            tkb : tkb
+        })
+
+        newSchedule.save();
+        msg = "success"
+        return msg;
+    }   
+}
+
+// Update teacher Schedule Function
+function updateTeacherSchedule(id, result) {
+
+}
+
+// Create Class function
 function createClass(id, className, member) {
     const _class = mongoose.model("class", Class.schema);
 
@@ -148,6 +193,13 @@ function createClass(id, className, member) {
     return msg;
 }
 
+// Update Class Function
+// MISSING
+function updateClass(id, className, member) {
+
+}
+
+// create Grade function
 function createGrade(id, result) {
     const grade = mongoose.model("grade", Grade.schema);
 
@@ -157,8 +209,7 @@ function createGrade(id, result) {
     }
 
     if (check != null) {
-        grade.updateOne({"id" : id}, {"result" : result});
-        msg = "success"
+        msg = "Dupplicate ID"
         return msg;
     } else {
         var newGrade = new grade({
@@ -172,6 +223,27 @@ function createGrade(id, result) {
     }   
 }
 
+
+// Update Greade Function
+function updateGrade(id, result) {
+    const grade = mongoose.model("grade", Grade.schema);
+
+    var check = getter.getGrade(id);
+    if (check instanceof Error) {
+        return check;
+    }
+
+    if (check != null) {
+        grade.updateOne({"id" : id}, {"result" : result});
+        msg = "success"
+        return msg;
+    } else {
+        return null;
+    }
+}
+
+
+// Create Rule Function
 function createRule(numberOfStudent, numberOfClass, age) {
     const rule = mongoose.model("rule", Rule.schema);
     
@@ -194,8 +266,16 @@ function createRule(numberOfStudent, numberOfClass, age) {
     return msg;
 }
 
-function createSchoolYear(_year, semester, nid) {
-    const year = mongoose.model("Schoolyear", Schoolyear.schema);
+// Update Rule Function
+// MISSING
+function updateRule(numberOfStudent, numberOfClass, age) {
+
+}
+
+
+// Create Schoolyear Function
+function createSchoolYear(YEAR, semester, nid) {
+    const year = mongoose.model("Schoolyear", SchoolYear.schema);
 
     var check = getter.getSchoolYear(nid);
 
@@ -208,7 +288,7 @@ function createSchoolYear(_year, semester, nid) {
         return msg;
     } else {
         var newYear = new year({
-            year : _year,
+            year : YEAR,
             semester : semester,
             nid : nid
         })
@@ -219,6 +299,14 @@ function createSchoolYear(_year, semester, nid) {
     }
 }
 
+// Update Schoolyear Function
+// MISSING
+function updateSchoolYear(YEAR, semester, nid) {
+
+}
+
 module.exports = {
-    controller: {createAccount, createProfile, createClass, createGrade, createRule, createSchoolYear}
+    controller: {createAccount, updateAccount, createProfile, updateProfile, createTeacherSchedule,
+         updateTeacherSchedule, createClass, updateClass, createGrade, updateGrade,
+          createRule, updateRule, createSchoolYear, updateSchoolYear}
 }

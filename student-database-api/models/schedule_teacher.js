@@ -1,8 +1,8 @@
 var mongoose = require("mongoose");
-var teacherSchedule = new mongoose.Schema({
+var teacherScheduleSchema = new mongoose.Schema({
     
 });
 
-var Teacher_schedule = mongoose.model("class", teacherSchedule);
+var Teacher_schedule = mongoose.model("scheduleTeacher", teacherScheduleSchema);
 
 module.exports = Teacher_schedule;

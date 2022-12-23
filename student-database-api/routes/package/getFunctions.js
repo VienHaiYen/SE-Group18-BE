@@ -7,6 +7,7 @@ const Grade = require("../../models/grade");
 const Info = require("../../models/info");
 const Rule = require("../../models/rule");
 const Schoolyear = require("../../models/schoolyear");
+const teacher_schedule = require("../../models/schedule_teacher");
 
 function getInfo(id, role) {
     const info = mongoose.model("info", Info.schema);
@@ -23,6 +24,16 @@ function getInfo(id, role) {
         return result;
     })
     return result;
+}
+
+function getTeacherSchedule(id) {
+    const teacherShedule = mongoose.model("scheduleTeacher", teacher_schedule.schema);
+
+    var result = teacherShedule.findOne({"id" : id}, (err, result) => {
+        if (err) return err;
+        if (!result) return null;
+        return result;
+    })
 }
 
 function getClass(id) {
@@ -76,5 +87,5 @@ function getAccount(id) {
 }
 
 module.exports = {
-    controller: {getInfo, getClass, getAccount, getGrade, getRule, getSchoolYear}
+    controller: {getInfo, getTeacherSchedule, getClass, getAccount, getGrade, getRule, getSchoolYear}
 }
