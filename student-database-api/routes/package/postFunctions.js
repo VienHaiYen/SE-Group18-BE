@@ -38,9 +38,24 @@ function createAccount(ID, PASSWORD, ROLE) {
 }
 
 // Update account function
-// MISSING
 function updateAccount(ID, PASSWORD, ROLE) {
+    const acc = mongoose.model("account", Account.schema);
+    var check = getter.getAccount(ID);
 
+    if (check instanceof Error) {
+        return check;
+    }
+
+    if (check != null) {
+        acc.updateOne({"id" : ID}, {$set : {
+            "password" : PASSWORD,
+            "role" : ROLE
+        }});
+        msg = "success"
+        return msg;
+    } else {
+        return null;
+    }
 }
 
 // Create new Profile for account function
@@ -129,16 +144,37 @@ function createProfile(id, role, name, birthday, address, gender, mail, phone, s
 }
 
 // Update profile function
-// MISSING
 function updateProfile(id, role, name, birthday, address, gender, mail, phone, subject) {
+    const info = mongoose.model("info", Info.schema);
 
+    var check = getter.getInfo(id);
+    if (check instanceof Error) {
+        return check;
+    }
+
+    if (check != null) {
+        info.updateOne({"id" : id}, {$set : {
+            "role" : role,
+            "name" : name,
+            "birthday" : birthday,
+            "address" : address,
+            "gender" : gender,
+            "mail" : mail,
+            "phone" : phone,
+            "subject" : subject
+        }});
+        msg = "success"
+        return msg;
+    } else {
+        return null;
+    }
 }
 
 // Create Teacher Schedule function
-function createTeacherSchedule(id, tkb) {
-    const teacher_schedule = mongoose.model("scheduleTeacher", Teacher_schedule.schema);
+function createTeacherSchedule(nid, id, tkb) {
+    const teacher_schedule = mongoose.model("teacher-schedule", Teacher_schedule.schema);
 
-    var check = getter.getTeacherSchedule(id);
+    var check = getter.getTeacherSchedule(nid,id);
     if (check instanceof Error) {
         return check;
     }
@@ -148,8 +184,11 @@ function createTeacherSchedule(id, tkb) {
         return msg;
     } else {
         var newSchedule = new teacher_schedule({
-            id : id,
-            tkb : tkb
+            nid : nid,
+            schedule : {
+                id : id,
+                _class : _class
+            }
         })
 
         newSchedule.save();
@@ -159,26 +198,39 @@ function createTeacherSchedule(id, tkb) {
 }
 
 // Update teacher Schedule Function
-function updateTeacherSchedule(id, result) {
+function updateTeacherSchedule(nid, id, _class) {
+    const teacher_schedule = mongoose.model("teacher-schedule", Teacher_schedule.schema);
 
-}
-// NEED FIXING
-// Create Class function
-function createClass(id, className, member) {
-    const _class = mongoose.model("class", Class.schema);
-
-    var check = _class.findOne({"id" : id}, (err, result) => {
-        if (err) return err;
-        if (result) return true;
-        else return false;
-    })
-
+    var check = getter.getTeacherSchedule(nid, id);
     if (check instanceof Error) {
         return check;
     }
 
-    if (check) {
-        msg = "Dupplicate class ID"
+    if (check != null) {
+        teacher_schedule.findOneAndUpdate({
+            "nid" : nid,
+            "schedule.id" : id
+        }, { $set : {
+            "schedule._class" : _class
+        }})
+    } else {
+        return null;
+    }
+}
+
+
+// NEED FIXING (PENDING)
+// Create Class function
+function createClass(id, className, member) {
+    const _class = mongoose.model("class", Class.schema);
+
+    var check = getter.getClass(id);
+    if (check instanceof Error) {
+        return check;
+    }
+    
+    if (check != null) {
+        msg = "dupplicate class ID";
         return msg;
     }
 
@@ -193,17 +245,35 @@ function createClass(id, className, member) {
     return msg;
 }
 
-// Update Class Function
-// MISSING
+// Update Class Function (PENDING)
 function updateClass(id, className, member) {
+    const _class = mongoose.model("class", Class.schema);
+    var check = getter.getClass(id);
 
+    if (check instanceof Error) {
+        return check;
+    }
+
+    if (check != null) {
+        _class.updateOne({
+            //"nid" : nid,
+            "classlist.id" : id 
+        }, {
+            "className" : className,
+            "member" : member
+        });
+        msg = "success"
+        return msg;
+    } else {
+        return null;
+    }
 }
-// NEED FIXING
+// NEED FIXING (DONE)
 // create Grade function
-function createGrade(id, result) {
+function createGrade(nid, id, result) {
     const grade = mongoose.model("grade", Grade.schema);
 
-    var check = getter.getGrade(id);
+    var check = getter.getGrade(nid, id);
     if (check instanceof Error) {
         return check;
     }
@@ -223,12 +293,12 @@ function createGrade(id, result) {
     }   
 }
 
-// NEED FIXING
+// NEED FIXING (DONE)
 // Update Greade Function
-function updateGrade(id, result) {
+function updateGrade(nid, id, result) {
     const grade = mongoose.model("grade", Grade.schema);
 
-    var check = getter.getGrade(id);
+    var check = getter.getGrade(nid, id);
     if (check instanceof Error) {
         return check;
     }
@@ -242,34 +312,77 @@ function updateGrade(id, result) {
     }
 }
 
-// NEED FIXING
+// NEED FIXING (DONE)
 // Create Rule Function
-function createRule(numberOfStudent, numberOfClass, age) {
+function createRule(nid, numStudent,numStudent_max,numClass10,numClass11,numClass12,ageMax,ageMin) {
     const rule = mongoose.model("rule", Rule.schema);
     
-    var check = rule.deleteMany({}, (err) => {
-        if (err) return err;
-    })
+    var check = getter.getRule(nid);
 
     if (check instanceof Error) {
         return check;
     }
 
-    var newRule = new rule({
-        numberOfStudent : numberOfStudent,
-        numberOfClass : numberOfClass,
-        age: age
-    })
+    if (check != null) {
+        msg = "dupplicate rule ID";
+        return msg;
+    }
 
+    var newRule=new rule({
+        nid : nid,
+        numberOfStudent: {
+            min:numStudent,
+            max:numStudent_max
+        },
+        numberOfClass:{
+
+            _10:numClass10,
+            _11:numClass11,
+            _12:numClass12
+
+        },
+        age:{
+            min:ageMin,
+            max:ageMax
+        }
+    });
     newRule.save();
-    msg = "success"
-    return msg;
 }
 
 // Update Rule Function
 // MISSING
-function updateRule(numberOfStudent, numberOfClass, age) {
+function updateRule(nid, numStudent,numStudent_max,numClass10,numClass11,numClass12,ageMax,ageMin) {
+    const rule = mongoose.model("rule", Rule.schema);
+    
+    var check = getter.getRule(nid);
 
+    if (check instanceof Error) {
+        return check;
+    }
+
+    if (check != null) {
+        rule.updateOne({
+            nid : nid
+        },{$set: {
+            numberOfStudent: {
+                min:numStudent,
+                max:numStudent_max
+            },
+            numberOfClass:{
+    
+                _10:numClass10,
+                _11:numClass11,
+                _12:numClass12
+    
+            },
+            age:{
+                min:ageMin,
+                max:ageMax
+            }
+        }})
+    } else {
+        return null;
+    }
 }
 
 
@@ -300,9 +413,23 @@ function createSchoolYear(YEAR, semester, nid) {
 }
 
 // Update Schoolyear Function
-// MISSING
 function updateSchoolYear(YEAR, semester, nid) {
+    const year = mongoose.model("Schoolyear", SchoolYear.schema);
+    
+    var check = getter.getRule(nid);
 
+    if (check instanceof Error) {
+        return check;
+    }
+
+    if (check != null) {
+        year.updateOne({nid : nid}, {$set: {
+            "year" : YEAR,
+            "semester" : semester
+        }})
+    } else {
+        return null;
+    }
 }
 
 module.exports = {

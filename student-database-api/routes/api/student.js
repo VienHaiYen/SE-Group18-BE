@@ -11,4 +11,8 @@ const auth = require("../../session").auth;
 
 router.use(express.json())
 
+// GET
+
+// POST
+
 module.exports = router;

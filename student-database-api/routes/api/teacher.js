@@ -12,25 +12,20 @@ const auth = require("../../session").auth;
 
 
 router.use(express.json());
-// router.use(ensureAuth.ensureTeacher());
 
+// GET
+
+// POST
 router.post("/input-grade", function(req,res, next) {
     if (!auth.ensureTeacher(req)) {
         res.status(401).send({
-            "message" : "You are not an teacher"
+            "message" : "You are not a teacher"
         });
     } else {
-        
+        // DEFINE FUNCTION HERE
     }
 })
 
-router.get("/class-list", function(req,res) {
-    
 
-}) 
-
-router.get("/teacher-schedule", function(req,res) {
-
-}) 
 
 module.exports = router;

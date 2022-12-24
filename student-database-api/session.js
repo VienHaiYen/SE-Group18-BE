@@ -127,5 +127,5 @@ function ensureStudent(req, res, next) {
 
 module.exports = {
     session : router,
-    auth : {ensureAuthenticated, enSureAdmin, ensureTeacher, ensureStudent}
+    auth : {ensureAuthenticated, ensureAdmin: enSureAdmin, ensureTeacher, ensureStudent}
 };

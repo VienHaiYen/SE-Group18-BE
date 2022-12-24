@@ -25,30 +25,41 @@ function getInfo(id, role) {
     })
     return result;
 }
-// NEED FIXING
-function getTeacherSchedule(id) {
-    const teacherShedule = mongoose.model("scheduleTeacher", teacher_schedule.schema);
+// NEED FIXING (DONE)
+function getTeacherSchedule(nid, id) {
+    const teacherShedule = mongoose.model("teacher-schedule", teacher_schedule.schema);
 
-    var result = teacherShedule.findOne({"id" : id}, (err, result) => {
+    var result = teacherShedule.findOne({$and :[
+        {"nid" : nid},
+        {"schedule.id" : id}
+    ]}, (err, result) => {
         if (err) return err;
         if (!result) return null;
         return result;
     })
+
+    return result;
 }
-// NEED FIXING
+// NEED FIXING (PENDING)
 function getClass(id) {
     const _class = mongoose.model("class", Class.schema);
-    var result = _class.findOne({"id" : id}, (err, result) => {
+    var result = _class.findOne({$and : [
+        // {"nid" : nid},
+        {"classlist.id" : id}
+    ]}, (err, result) => {
         if (err) return err;
         if (!result) return null;
         return result;
     })
     return result;
 }
-// NEED FIXING
-function getGrade(id) {
+// NEED FIXING (DONE)
+function getGrade(nid, id) {
     const grade = mongoose.model("grade", Grade.schema);
-    var result = grade.findOne({"id" : id}, (err, result) => {
+    var result = grade.findOne({$and : [
+        {"nid" : nid},
+        {"point.id" : id}
+    ]}, (err, result) => {
         if (err) return err;
         if (!result) return null;
         return result;
@@ -56,9 +67,9 @@ function getGrade(id) {
     return result;
 }
 
-function getRule() {
+function getRule(nid) {
     const rule = mongoose.model("rule", Rule.schema);
-    var result = rule.find({} , (err, result) => {
+    var result = rule.find({"nid" : nid} , (err, result) => {
         if (err) return err;
         if (!result) return null;
         return result;

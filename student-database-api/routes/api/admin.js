@@ -11,10 +11,21 @@ const session = require("../../session").session;
 const auth = require("../../session").auth;
 
 router.use(express.json());
-// router.use(ensureAuth.ensureAdmin());
 
+// GET
+router.get("/rule", function(req, res) {
+    if (!auth.ensureAdmin(req)) {
+        res.status(401).send({
+            "message" : "You are not an admin"
+        });
+    } else {
+        // DEFINE FUNCTION HERE
+    }
+})
+
+// POST
 router.post("/input-student", function(req, res, next) {
-    if (!auth.enSureAdmin(req)) {
+    if (!auth.ensureAdmin(req)) {
         res.status(401).send({
             "message" : "You are not an admin"
         });
@@ -48,34 +59,46 @@ router.post("/input-student", function(req, res, next) {
     }
 })
 
-router.get("/rule", function(req, res) {
-    if (!auth.enSureAdmin(req)) {
-        res.status(401).send({
-            "message" : "You are not an admin"
-        });
-    } else {
-
-    }
-})
-
 router.post("/rule", function(req, res, next) {
-    if (!auth.enSureAdmin(req)) {
+    if (!auth.ensureAdmin(req)) {
         res.status(401).send({
             "message" : "You are not an admin"
         });
     } else {
-        
+        // DEFINE FUNCTION HERE
     }
 })
 
 router.post("/class-list", function(req, res, next) {
-    if (!auth.enSureAdmin(req)) {
+    if (!auth.ensureAdmin(req)) {
         res.status(401).send({
             "message" : "You are not an admin"
         });
     } else {
-        
+        // DEFINE FUNCTION HERE
     }
 })
+
+router.post("/teacher-schedule", function(req,res) {
+    if (!auth.ensureAdmin(req)) {
+        res.status(401).send({
+            "message" : "You are not an admin"
+        })
+    } else {
+        // DEFINE FUNCTION HERE
+    }
+}) 
+
+router.post("/class-list", (req, res) => {
+    if (!auth.ensureAdmin(req)) {
+        res.status(401).send({
+            "message" : "You are not an admin"
+        })
+    } else {
+        // DEFINE FUNCTION HERE
+    }
+})
+
+
 
 module.exports = router;
