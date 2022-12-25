@@ -5,6 +5,7 @@ const express = require("express");
 const { default: mongoose } = require("mongoose");
 const router = express.Router();
 const info = require("../../models/info");
+const Class = require("../../models/class");
 const poster = require("../package/postFunctions").controller;
 const getter = require("../package/getFunctions").controller;
 const session = require("../../session").session;
@@ -120,7 +121,34 @@ router.get("/about", (req, res) => {
         })
     }
     else {
-        // DEFINE FUNCTION HERE
+        var id = req.body.id;
+        var result = getter.getInfo(id, "student");
+
+        if (result == MSG.ERROR_MESSAGE) {
+            return res.status(500).send({
+                "message" : "unexpected error"
+            })
+        }
+
+        if (result == MSG.EMPTY_MESSAGE) {
+            result = getter.getInfo(id, "teacher");
+            if (result == MSG.ERROR_MESSAGE) {
+                return res.status(500).send({
+                    "message" : "unexpected error"
+                })
+            }
+
+            if (result == MSG.EMPTY_MESSAGE) {
+                return res.status(404).send({
+                    "message" : "record not found"
+                })
+            }
+        }
+
+        return res.status(200).send({
+            result
+        })
+        
     }
 })
 
@@ -130,23 +158,107 @@ router.get("/teacher-schedule", function(req,res) {
             "message" : "You are not a teacher or an admin"
         })
     } else {
-        // DEFINE FUNCTION HERE
+        var id = req.body.id;
+        var nid = req.body.nid;
+
+        var data = getter.getTeacherSchedule(nid, id);
+        var _classes = JSON.parse(data)["_class"];
+        var info = getter.getInfo(nid, id);
+        var teacherName = JSON.parse(info)["name"];
+        var subject = JSON.parse(info)["subject"];
+        
+        if (data == MSG.ERROR_MESSAGE || info == MSG.ERROR_MESSAGE) {
+            return res.status(500).send({
+                "message" : "unexpected error"
+            })
+        }
+
+        if (data == MSG.EMPTY_MESSAGE || info == MSG.EMPTY_MESSAGE) {
+            return res.status(404).send({
+                "message" : "record not found"
+            })
+        }
+
+        return res.status(404).send({
+            _classes,
+            "name" : teacherName,
+            "subject" : subject
+        })
+        
     }
 }) 
 
 router.get("/class-list", (req, res) => {
     if (!auth.ensureTeacher(req) && !auth.ensureAdmin(req)) {
-        res.status(401).send({
+        return res.status(401).send({
             "message" : "You are not a teacher or an admin"
         })
+    } else if (auth.ensureAdmin(req)) {
+        var id = req.body.id;
+        if (id != null) {
+            var nid = req.body.nid;
+            var result = getter.getClass(nid, id);
+            var headTeacher = JSON.parse(result)["headteacher"];
+            var member = JSON.parse(result)["member"];
+
+            if (result == MSG.ERROR_MESSAGE) {
+                return res.status(500).send({
+                    "message" : "Unexpected Error"
+                })
+            }
+
+            if (result == MSG.EMPTY_MESSAGE) {
+                return res.status(404).send({
+                    "message" : "Record not found"
+                })
+            }
+
+            return res.status(200).send({
+                "headteacher" : headTeacher,
+                "member" : member
+            })
+        } else {
+
+            const _class = mongoose.model("_class", Class.schema);
+            var result = _class.find({"nid" : nid}, "classname headteacher");
+
+            if (result == MSG.ERROR_MESSAGE) {
+                return res.status(500).send({
+                    "message" : "Unexpected Error"
+                })
+            }
+
+            if (result == MSG.EMPTY_MESSAGE) {
+                return res.status(404).send({
+                    "message" : "Record not found"
+                })
+            }
+
+            return res.status(200).send({
+                result
+            })
+        }
     } else {
         var id = req.body.id;
         var nid = req.body.nid;
         var result = getter.getClass(nid, id);
+        var member = JSON.parse(result)["member"];
 
         if (result == MSG.ERROR_MESSAGE) {
-
+            return res.status(500).send({
+                "message" : "Unexpected Error"
+            })
         }
+
+        if (result == MSG.EMPTY_MESSAGE) {
+            return res.status(404).send({
+                "message" : "Record not found"
+            })
+        }
+
+        return res.status(200).send({
+            "member" : member
+        })
     }
 })
 

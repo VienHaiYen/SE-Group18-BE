@@ -23,7 +23,41 @@ router.post("/input-grade", function(req,res, next) {
             "message" : "You are not a teacher"
         });
     } else {
-        // DEFINE FUNCTION HERE
+        var member = req.body.member;
+        var id = req.body.id;
+        var data = getter.getInfo(id, "teacher");
+        if (data == MSG.ERROR_MESSAGE) {
+            return res.status(500).send({
+                "message" : "unexpected error"
+            })
+        }
+
+        if (data == MSG.EMPTY_MESSAGE) {
+            return res.status(404).send({
+                "message" : "record not found"
+            })
+        }
+
+        var subject = JSON.parse(data)["subject"];
+
+        for (let i = 0; i < member.length; i++) {
+            var msg = poster.updateScoreBySubject(subject, nid , member[i].id, member[i].score);
+            if (msg == MSG.ERROR_MESSAGE) {
+                return res.status(500).send({
+                    "message" : "unexpected error"
+                })
+            }
+    
+            if (msg == MSG.EMPTY_MESSAGE) {
+                return res.status(404).send({
+                    "message" : "record not found"
+                })
+            }
+        }
+
+        return res.status(404).send({
+            "message" : "Successful"
+        })
     }
 })
 

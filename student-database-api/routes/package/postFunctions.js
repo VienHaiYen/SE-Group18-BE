@@ -178,6 +178,7 @@ function updateTeacherSchedule(nid, id, _class) {
         }, { $set : {
             "schedule._class" : _class
         }})
+        return MSG.SUCCESS_MESSAGE;
     } else {
         return MSG.EMPTY_MESSAGE;
     }
@@ -264,7 +265,7 @@ function updateGrade(nid, id, result) {
     }
 
     if (check != MSG.EMPTY_MESSAGE) {
-        grade.updateOne({"id" : id}, {"result" : result});
+        grade.updateOne({"nid" : nid, "id" : id}, {"result" : result});
         return MSG.SUCCESS_MESSAGE;
     } else {
         return MSG.DUPPLICATE_MESSAGE;
@@ -305,11 +306,11 @@ function createRule(nid, numStudent,numStudent_max,numClass10,numClass11,numClas
         }
     });
     newRule.save();
+    return MSG.SUCCESS_MESSAGE;
 }
 
 // Update Rule Function
-// MISSING
-function updateRule(nid, numStudent,numStudent_max,numClass10,numClass11,numClass12,ageMax,ageMin) {
+function updateRule(nid, numStudent_min,numStudent_max,numClass10,numClass11,numClass12,age_min,age_max) {
     const rule = mongoose.model("rule", Rule.schema);
     
     var check = getter.getRule(nid);
@@ -323,7 +324,7 @@ function updateRule(nid, numStudent,numStudent_max,numClass10,numClass11,numClas
             nid : nid
         },{$set: {
             numberOfStudent: {
-                min:numStudent,
+                min:numStudent_min,
                 max:numStudent_max
             },
             numberOfClass:{
@@ -334,10 +335,11 @@ function updateRule(nid, numStudent,numStudent_max,numClass10,numClass11,numClas
     
             },
             age:{
-                min:ageMin,
-                max:ageMax
+                min:age_min,
+                max:age_max
             }
         }})
+        return MSG.SUCCESS_MESSAGE;
     } else {
         return MSG.EMPTY_MESSAGE;
     }
@@ -383,6 +385,27 @@ function updateSchoolYear(YEAR, semester, nid) {
             "year" : YEAR,
             "semester" : semester
         }})
+        return MSG.SUCCESS_MESSAGE;
+    } else {
+        return MSG.EMPTY_MESSAGE;
+    }
+}
+
+function updateGradeBySubject(subject, nid, id, result) {
+    const grade = mongoose.model("Schoolyear", SchoolYear.schema);
+    
+    var check = getter.getGrade(nid, id);
+
+    if (check == MSG.ERROR_MESSAGE) {
+        return MSG.ERROR_MESSAGE;
+    }
+
+    var update = {}
+    update[subject] = {result}
+
+    if (check != MSG.EMPTY_MESSAGE) {
+        year.updateOne({"nid" : nid, "id" : id}, {$set: update})
+        return MSG.SUCCESS_MESSAGE;
     } else {
         return MSG.EMPTY_MESSAGE;
     }
@@ -391,5 +414,5 @@ function updateSchoolYear(YEAR, semester, nid) {
 module.exports = {
     controller: {createAccount, updateAccount, createProfile, updateProfile, createTeacherSchedule,
          updateTeacherSchedule, createClass, updateClass, createGrade, updateGrade,
-          createRule, updateRule, createSchoolYear, updateSchoolYear}
+          createRule, updateRule, createSchoolYear, updateSchoolYear, updateScoreBySubject: updateGradeBySubject}
 }

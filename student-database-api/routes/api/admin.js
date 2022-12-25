@@ -4,7 +4,7 @@ const express = require("express");
 const { default: mongoose } = require("mongoose");
 const Account = require("../../models/account");
 const router = express.Router();
-const info = require("../../models/info");
+const Info = require("../../models/info");
 const poster = require("../package/postFunctions").controller;
 const getter = require("../package/getFunctions").controller;
 const MSG = require("../package/defineMessage").msg;
@@ -21,7 +21,49 @@ router.get("/rule", function(req, res) {
             "message" : "You are not an admin"
         });
     } else {
-        // DEFINE FUNCTION HERE
+        var nid = req.body.nid;
+        var result = getter.getRule(nid);
+
+        if (result == MSG.ERROR_MESSAGE) {
+            return res.status(500).send({
+                "message" : "unexpected error"
+            })
+        }
+
+        if (result == MSG.EMPTY_MESSAGE) {
+            return res.status(404).send({
+                "message" : "record not found"
+            })
+        }
+
+        return res.status(200).send({
+            result
+        })        
+    }
+})
+
+router.get("/teacher-list", function(req, res) {
+    if (!auth.ensureAdmin(req)) {
+        res.status(401).send({
+            "message" : "You are not an admin"
+        });
+    } else {
+        var result;
+
+        const info = mongoose.model("info", Info.schema);
+        info.find({"role" : "teacher"}, (err, data) => {
+            if (err) {
+                return res.status(500).send({
+                    "message" : "Unexpected Error"
+                })
+            }
+
+            return (result = data);
+        })
+
+        res.status(200).send({
+            result
+        })
     }
 })
 
@@ -95,7 +137,8 @@ router.post("/input-student", function(req, res, next) {
         msg = poster.createProfile(id, role, name, birthday, address, gender, mail, phone, _class, subject);
         if (msg == MSG.SUCCESS_MESSAGE) {
             return res.status(200).send({
-                "message" : "Successful"
+                "message" : "Successful",
+                "id" : id
             });
         } else if (msg == MSG.ERROR_MESSAGE) {
             return res.status(500).send({
@@ -178,7 +221,8 @@ router.post("/input-teacher", function(req, res, next) {
         msg = poster.createProfile(id, role, name, birthday, address, gender, mail, phone, _class, subject);
         if (msg == MSG.SUCCESS_MESSAGE) {
             return res.status(200).send({
-                "message" : "Successful"
+                "message" : "Successful",
+                "id" : id
             });
         } else if (msg == MSG.ERROR_MESSAGE) {
             return res.status(500).send({
@@ -198,7 +242,38 @@ router.post("/rule", function(req, res, next) {
             "message" : "You are not an admin"
         });
     } else {
-        // DEFINE FUNCTION HERE
+        var nid = req.body.nid;
+        var numberOfClass = {
+            _10 : req.body.numberOfClass10,
+            _11 : req.body.numberOfClass11,
+            _12 : req.body.numberOfClass12
+        }
+        var numberOfStudent = {
+            min : req.body.numberOfStudent_min,
+            max : req.body.numberOfStudent_max,
+        }
+        var age = {
+            min : req.body.age_min,
+            max : req.body.age_max,
+        }
+
+        var msg = poster.updateRule(nid, numberOfStudent.min, numberOfStudent.max, 
+            numberOfClass._10, numberOfClass._11, numberOfClass._12, 
+            age.min, age.max)
+
+            if (msg == MSG.SUCCESS_MESSAGE) {
+                return res.status(200).send({
+                    "message" : "Successful",
+                });
+            } else if (msg == MSG.ERROR_MESSAGE) {
+                return res.status(500).send({
+                    "message" : "Unexpected Error"
+                })
+            } else {
+                return res.status(418).send({
+                    "message" : "Dupplicate unique infomation"
+                });
+            }
     }
 })
 
