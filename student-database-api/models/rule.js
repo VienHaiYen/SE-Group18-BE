@@ -1,5 +1,6 @@
 var mongoose = require("mongoose");
 var ruleSchema = new mongoose.Schema({
+    nid:{type:String, required:true,unique:true},
     numberOfStudent:{
         min:{type:Number},
         max:{type:Number, default:40}
