@@ -19,6 +19,7 @@ var accountSchema = new mongoose.Schema({
     },
     role : {
         type: String,
+        enum: ["student","teacher","admin","na"],
         required: true
     }
 });

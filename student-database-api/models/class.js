@@ -12,11 +12,15 @@ var classSchema = new mongoose.Schema({
         type:String,
         required:true
     },
+    headteacher:{
+        type:String,
+        required:true,
+    },
     member: [String]
 });
 
 classSchema.index({nid : 1, id : 1}, {unique: true})
 
-var Class = mongoose.model("class", classSchema);
+var Class = mongoose.model("_class", classSchema);
 
 module.exports = Class;
