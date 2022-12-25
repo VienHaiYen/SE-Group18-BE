@@ -84,7 +84,7 @@ var pointSchema = new mongoose.Schema({
 
 var gradeSchema = new mongoose.Schema({
     nid:{
-        type:Number,
+        type:String,
         required:true,
         unique:true
     },
