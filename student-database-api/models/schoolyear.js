@@ -10,7 +10,7 @@ var schoolyearSchema = new mongoose.Schema({
         required:true
     },
     nid:{
-        type:Number,
+        type:String,
         required:true,
         unique:true
     }
