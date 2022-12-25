@@ -39,6 +39,4 @@ function layout(user) {
     return LAYOUT[user];
 }
 
-
-
 module.exports = layout;

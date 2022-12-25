@@ -4,11 +4,6 @@ var mongoose = require("mongoose");
 
 // The schema of the account info
 var infoSchema = new mongoose.Schema({
-    username:{
-        type:String,
-        required:true,
-        unique:true
-    },
     id:{
         type:String, required:true, unique:true
     },

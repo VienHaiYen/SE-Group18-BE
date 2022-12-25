@@ -58,7 +58,7 @@ router.post("/login", (req,res) => {
                 const info = mongoose.model("info", Info.schema);
                 displayName = info.findOne({"id" : id}, "name");
 
-                displayLayout = layout[role];
+                displayLayout = layout(role);
                 
                 return res.status(200).send({
                     "name" : displayName,

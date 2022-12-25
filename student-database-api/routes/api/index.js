@@ -75,12 +75,33 @@ router.get("/grade", (req, res) => {
                 "result" : result
             })
         }
+        else if (subject != null) { // Grade by class
+            var data = JSON.parse(getter.getGrade(nid, id))["result"];
+            var result = JSON.parse(data)[`${subject}`]
+            var headTeacher = JSON.parse(getter.getClass(id))["headteacher"];
+            
 
+            if (data == MSG.ERROR_MESSAGE) {
+                return res.status(500).send({
+                    "message" : "unexpected error"
+                })
+            }
 
+            if (data == MSG.EMPTY_MESSAGE) {
+                return res.status(404).send({
+                    "message" : "record not found"
+                })
+            }
 
+            return res.status(200).send({
+                "grade" : result,
+                "headteacher" : headTeacher                
+            })
+        }
     }
 }) 
 
+// REDACTED
 // router.get("/schedule", (req, res) => {
 //     if(!auth.ensureAuthenticated(req)) {    
 //         res.status(401).send({
@@ -119,7 +140,13 @@ router.get("/class-list", (req, res) => {
             "message" : "You are not a teacher or an admin"
         })
     } else {
-        // DEFINE FUNCTION HERE
+        var id = req.body.id;
+        var nid = req.body.nid;
+        var result = getter.getClass(nid, id);
+
+        if (result == MSG.ERROR_MESSAGE) {
+
+        }
     }
 })
 

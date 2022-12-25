@@ -17,6 +17,6 @@ var classSchema = new mongoose.Schema({
 
 classSchema.index({nid : 1, id : 1}, {unique: true})
 
-var Class = mongoose.model("class", classSchema);
+var Class = mongoose.model("_class", classSchema);
 
 module.exports = Class;

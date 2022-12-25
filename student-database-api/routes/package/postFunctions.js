@@ -56,7 +56,7 @@ function updateAccount(ID, PASSWORD, ROLE) {
 }
 
 // Create new Profile for account function
-function createProfile(id, role, name, birthday, address, gender, mail, phone, subject) {
+function createProfile(id, role, name, birthday, address, gender, mail, phone, _class, subject) {
 
     var info = mongoose.model("info", Info.schema);
 
@@ -103,6 +103,7 @@ function createProfile(id, role, name, birthday, address, gender, mail, phone, s
         gender:gender,
         mail:mail,
         phone:phone,
+        _class:_class,
         subject:subject
     })
     newProfile.save();
@@ -110,7 +111,7 @@ function createProfile(id, role, name, birthday, address, gender, mail, phone, s
 }
 
 // Update profile function
-function updateProfile(id, role, name, birthday, address, gender, mail, phone, subject) {
+function updateProfile(id, role, name, birthday, address, gender, mail, phone, _class, subject) {
     const info = mongoose.model("info", Info.schema);
 
     var check = getter.getInfo(id);
@@ -127,6 +128,7 @@ function updateProfile(id, role, name, birthday, address, gender, mail, phone, s
             "gender" : gender,
             "mail" : mail,
             "phone" : phone,
+            "_class" : _class,
             "subject" : subject
         }});
         return MSG.SUCCESS_MESSAGE;
@@ -182,12 +184,12 @@ function updateTeacherSchedule(nid, id, _class) {
 }
 
 
-// NEED FIXING (PENDING)
+// NEED FIXING (DONE)
 // Create Class function
-function createClass(id, className, member) {
+function createClass(nid, id, className, member) {
     const _class = mongoose.model("class", Class.schema);
 
-    var check = getter.getClass(id);
+    var check = getter.getClass(nid, id);
     if (check == MSG.ERROR_MESSAGE) {
         return MSG.ERROR_MESSAGE;
     }
@@ -207,9 +209,9 @@ function createClass(id, className, member) {
 }
 
 // Update Class Function (PENDING)
-function updateClass(id, className, member) {
+function updateClass(nid, id, className, member) {
     const _class = mongoose.model("class", Class.schema);
-    var check = getter.getClass(id);
+    var check = getter.getClass(nid, id);
 
     if (check == MSG.ERROR_MESSAGE) {
         return MSG.ERROR_MESSAGE;

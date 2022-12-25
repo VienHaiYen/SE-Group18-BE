@@ -33,95 +33,95 @@ function createAccount(ID, PASSWORD, ROLE) {
 }
 
 //define Fucntion to create an student
-function createStudent(ID,t1,t2,t3,t4,t5,v1,v2,v3,v4,v5,l1,l2,l3,l4,l5,h1,h2,h3,h4,h5,s1,s2,s3,s4,s5,ls1,ls2,ls3,ls4,ls5,d1,d2,d3,d4,d5,dd1,dd2,dd3,dd4,dd5,td1,td2,td3,td4,td5){
+// function createStudent(ID,t1,t2,t3,t4,t5,v1,v2,v3,v4,v5,l1,l2,l3,l4,l5,h1,h2,h3,h4,h5,s1,s2,s3,s4,s5,ls1,ls2,ls3,ls4,ls5,d1,d2,d3,d4,d5,dd1,dd2,dd3,dd4,dd5,td1,td2,td3,td4,td5){
 
-    //define "grade" is a schema of " Grade"
-    const grade= mongoose.model("grade",Grade.schema);
-    var newGrade=new grade({
-        id: ID,
-        result: {
-            Toan:{
-                mieng: t1,
-                _15:t2,
-                _45:t3,
-                _gk:t4,
-                _ck:t5
-
-
-            },
-           Van:{
-                mieng:v1,
-                _15:v2,
-                _45:v3,
-                _gk:v4,
-                _ck:v5
+//     //define "grade" is a schema of " Grade"
+//     const grade= mongoose.model("grade",Grade.schema);
+//     var newGrade=new grade({
+//         id: ID,
+//         result: {
+//             Toan:{
+//                 mieng: t1,
+//                 _15:t2,
+//                 _45:t3,
+//                 _gk:t4,
+//                 _ck:t5
 
 
-            },
-            Li:{
-                mieng:l1,
-                _15:l2,
-                _45:l3,
-                _gk:l4,
-                _ck:l5
-
-            },
-            Hoa:{
-                mieng: h1,
-                _15:h2,
-                _45:h3,
-                _gk:h4,
-                _ck:h5
+//             },
+//            Van:{
+//                 mieng:v1,
+//                 _15:v2,
+//                 _45:v3,
+//                 _gk:v4,
+//                 _ck:v5
 
 
-            },
-            Sinh:{
-                mieng:s1,
-                _15:s2,
-                _45:s3,
-                _gk:s4,
-                _ck:s5
+//             },
+//             Li:{
+//                 mieng:l1,
+//                 _15:l2,
+//                 _45:l3,
+//                 _gk:l4,
+//                 _ck:l5
+
+//             },
+//             Hoa:{
+//                 mieng: h1,
+//                 _15:h2,
+//                 _45:h3,
+//                 _gk:h4,
+//                 _ck:h5
 
 
-            },
-            Su:{
-                mieng:ls1,
-                _15:ls2,
-                _45:ls3,
-                _gk:ls4,
-                _ck:ls5
+//             },
+//             Sinh:{
+//                 mieng:s1,
+//                 _15:s2,
+//                 _45:s3,
+//                 _gk:s4,
+//                 _ck:s5
 
 
-            },
-            Dia:{
-                mieng:d1,
-                _15:d2,
-                _45:d3,
-                _gk:d4,
-                _ck:d5
+//             },
+//             Su:{
+//                 mieng:ls1,
+//                 _15:ls2,
+//                 _45:ls3,
+//                 _gk:ls4,
+//                 _ck:ls5
+
+
+//             },
+//             Dia:{
+//                 mieng:d1,
+//                 _15:d2,
+//                 _45:d3,
+//                 _gk:d4,
+//                 _ck:d5
     
 
 
-            },
-            DaoDuc:{
-                mieng:dd1,
-                _15:dd2,
-                _45:dd3,
-                _gk:dd4,
-                _ck:dd5
+//             },
+//             DaoDuc:{
+//                 mieng:dd1,
+//                 _15:dd2,
+//                 _45:dd3,
+//                 _gk:dd4,
+//                 _ck:dd5
 
 
-            },
-            TD:{
-                mieng:td1,
-                _15:td2,
-                _45:td3,
-                _gk:d4,
-                _ck:d5
+//             },
+//             TD:{
+//                 mieng:td1,
+//                 _15:td2,
+//                 _45:td3,
+//                 _gk:d4,
+//                 _ck:d5
 
 
-            },
-        }
+//             },
+//         }
         
         
         
@@ -129,15 +129,14 @@ function createStudent(ID,t1,t2,t3,t4,t5,v1,v2,v3,v4,v5,l1,l2,l3,l4,l5,h1,h2,h3,
         
 
         
-    })   ; 
+//     })   ; 
 
-}
+// }
 
-function createInfo(USERNAME, ID, ROLE, NAME, BIRTHDAY, ADDRESS, GENDER, MAIL, PHONE, SUBJECT)
+function createInfo(ID, ROLE, NAME, BIRTHDAY, ADDRESS, GENDER, MAIL, PHONE, _CLASS, SUBJECT)
 {
     const info=mongoose.model("info",Info.schema);
     var newInfo=new info({
-        username: USERNAME,
         id:ID,
         role:ROLE,
         name:NAME,
@@ -146,62 +145,63 @@ function createInfo(USERNAME, ID, ROLE, NAME, BIRTHDAY, ADDRESS, GENDER, MAIL, P
         gender:GENDER,
         mail:MAIL,
         phone:PHONE,
+        _class: _CLASS,
         subject: SUBJECT
     });
     newInfo.save();
 }
 
-function createRule(numStudent,numStudent_max,numClass10,numClass11,numClass12,ageMax,ageMin)
-{
-    const rule=mongoose.model("rule",Rule.schema);
-    var newRule=new rule({
-        numberOfStudent: {
-            min:numStudent,
-            max:numStudent_max
-        },
-        numberOfClass:{
+// function createRule(numStudent,numStudent_max,numClass10,numClass11,numClass12,ageMax,ageMin)
+// {
+//     const rule=mongoose.model("rule",Rule.schema);
+//     var newRule=new rule({
+//         numberOfStudent: {
+//             min:numStudent,
+//             max:numStudent_max
+//         },
+//         numberOfClass:{
 
-            _10:numClass10,
-            _11:numClass11,
-            _12:numClass12
+//             _10:numClass10,
+//             _11:numClass11,
+//             _12:numClass12
 
-        },
-        age:{
-            min:ageMin,
-            max:ageMax
-        }
-    });
-    newRule.save();
-}
-function createTeacherSchedule(n_id,ID,Class)
-{
-    const teacherSchedule=mongoose.model("scheduleTeacher",teacherSchedule.schema);
-    var newteaderSchedule=new teacherSchedule({
-        nid:n_id,
-        schedule: [
-            {
-                id: ID,
-                _class:CLASS
+//         },
+//         age:{
+//             min:ageMin,
+//             max:ageMax
+//         }
+//     });
+//     newRule.save();
+// }
+// function createTeacherSchedule(n_id,ID,Class)
+// {
+//     const teacherSchedule=mongoose.model("scheduleTeacher",teacherSchedule.schema);
+//     var newteaderSchedule=new teacherSchedule({
+//         nid:n_id,
+//         schedule: [
+//             {
+//                 id: ID,
+//                 _class:CLASS
             
 
-            }  
+//             }  
 
-        ]
+//         ]
         
 
         
-    })
-}
-function createSchoolyear(y,smt,n_id){
-    const schoolyear=mongoose.model("Schoolyear",SchoolYear.schema);
-    var newSchoolYear=new schoolyear({
-        year:y,
-        semester:smt,
-        nid:n_id
-    });
-    newSchoolYear.save();
+//     })
+// }
+// function createSchoolyear(y,smt,n_id){
+//     const schoolyear=mongoose.model("Schoolyear",SchoolYear.schema);
+//     var newSchoolYear=new schoolyear({
+//         year:y,
+//         semester:smt,
+//         nid:n_id
+//     });
+//     newSchoolYear.save();
 
-}
+// }
 
 
 
@@ -212,6 +212,10 @@ async function main() {
 
     // call the function
     createAccount("123", "123", "student"); 
-    createInfo("thinh","123","thinh","04/05/2002","HO CHI MINH","male","thinhngo04052002@gmail.com",null);
+    createAccount("456", "123", "teacher"); 
+    createAccount("789", "123", "admin"); 
+    createInfo("123","student","test1","04/05/2002","HO CHI MINH","male","test1@gmail.com","0123456789","11a10",null);
+    createInfo("456","teacher","test2","04/05/2002","HO CHI MINH","female","test2002@gmail.com","0123456789",null,"Toan");
+    createInfo("789","admin","test3","04/05/2002","HO CHI MINH","male","test3@gmail.com","0123456789",null,null);
     return 0;
 }

@@ -41,12 +41,12 @@ function getTeacherSchedule(nid, id) {
 
     return result;
 }
-// NEED FIXING (PENDING)
-function getClass(id) {
+// NEED FIXING (DONE)
+function getClass(nid, id) {
     const _class = mongoose.model("class", Class.schema);
     var result = _class.findOne({$and : [
-        // {"nid" : nid},
-        {"classlist.id" : id}
+        {"nid" : nid},
+        {"id" : id}
     ]}, (err, result) => {
         if (err) return msg.ERROR_MESSAGE;
         if (!result) return msg.EMPTY_MESSAGE;
