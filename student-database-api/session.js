@@ -2,7 +2,9 @@ const express = require("express");
 const router = express();
 const uuidv4 = require("uuid").v4;
 const mongoose = require("mongoose");
-const account = require("./models/account");
+const Account = require("./models/account");
+const Info = require("./models/info");
+const layout = require("./userLayout");
 
 router.use(express.json());
 
@@ -11,7 +13,7 @@ var sessions = [];
 router.post("/login", (req,res) => {
 
     var {id, password, role} = req.body;
-    var result = mongoose.model("account", account.schema);
+    var result = mongoose.model("account", Account.schema);
 
     if (!id || !password || !role) {
         return res.status(418).send({
@@ -52,9 +54,12 @@ router.post("/login", (req,res) => {
 
                 res.set("Set-Cookie", `session=${sessionId}`);
                 console.log(`${id} logged in`);
-                return res.status(200).send({
-                    "message" : "Logged in"
-                })
+
+                const info = mongoose.model("info", Info.schema);
+                displayName = info.findOne({"id" : id}, "name");
+
+                
+
             }
             else {
                 return res.status(200).send({
@@ -63,6 +68,8 @@ router.post("/login", (req,res) => {
             }
         })
     })
+
+
 })  
 
 router.post("/logout", (req, res) => {
