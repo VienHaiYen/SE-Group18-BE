@@ -9,7 +9,7 @@ var infoSchema = new mongoose.Schema({
     },
     role:{
         type:String,
-        enum:["student","teacher","admin"],
+        enum:["student","teacher","admin","na"],
         require:true
     },
     name:{
@@ -35,6 +35,10 @@ var infoSchema = new mongoose.Schema({
         required:true
     },
     subject: {
+        type:String,
+        default:null
+    },
+    _class: {
         type:String,
         default:null
     }

@@ -12,6 +12,10 @@ var classSchema = new mongoose.Schema({
         type:String,
         required:true
     },
+    headteacher:{
+        type:String,
+        required:true,
+    },
     member: [String]
 });
 
