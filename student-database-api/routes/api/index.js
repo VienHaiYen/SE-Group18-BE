@@ -19,7 +19,7 @@ router.use(require("./teacher"));
 router.use(require("./student"));
 
 // GET
-router.get("/viewMoreInfo", function(req, res) {
+router.get("/viewDev", function(req, res) {
     if(auth.ensureAuthenticated(req)) {    
         res.status(200).send({
             "Vien Hai Hien" : "MSSV",
@@ -46,6 +46,38 @@ router.get("/grade", (req, res) => {
     }
     else {
         // DEFINE FUNCTION HERE
+        var id = req.body.id;
+        var subject = req.body.subject;
+        var nid = req.body.nid;
+
+        if (subject == null) { // Grade by student
+            var result = getter.getGrade(nid, id)
+            var profile = JSON.parse(getter.getInfo(id, "student"));
+            var studentName = profile["name"];
+            var _class = profile["class"];
+            
+            if (result == MSG.ERROR_MESSAGE) {
+                return res.status(500).send({
+                    "message" : "unexpected error"
+                })
+            }
+
+            if (result == MSG.EMPTY_MESSAGE) {
+                return res.status(404).send({
+                    "message" : "record not found"
+                })
+            }
+
+            return res.status(200).send({
+                "nid" : nid,
+                "name" : studentName,
+                "class" : _class,
+                "result" : result
+            })
+        }
+
+
+
     }
 }) 
 
