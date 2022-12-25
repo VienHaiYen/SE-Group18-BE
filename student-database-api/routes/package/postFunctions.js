@@ -9,6 +9,7 @@ const Rule = require("../../models/rule");
 const SchoolYear = require("../../models/schoolyear");
 const Teacher_schedule = require("../../models/schedule_teacher");
 const getter = require("./getFunctions").controller;
+const MSG = require("./defineMessage").msg;
 
 
 // Create new account function
@@ -16,14 +17,12 @@ function createAccount(ID, PASSWORD, ROLE) {
     const acc = mongoose.model("account", Account.schema);
 
     var check = getter.getAccount(ID);
-    if (check instanceof Error) {
-        msg = "error"
-        return msg;
+    if (check == MSG.ERROR_MESSAGE) {
+        return MSG.ERROR_MESSAGE;
     }
 
-    if (check != null) {
-        msg = "dupplicate ID"
-        return msg;
+    if (check != MSG.EMPTY_MESSAGE) {
+        return MSG.DUPPLICATE_MESSAGE;
     }
 
     var newAcc = new acc({
@@ -33,8 +32,7 @@ function createAccount(ID, PASSWORD, ROLE) {
     });
 
     newAcc.save();
-    msg = "success"
-    return msg;
+    return MSG.SUCCESS_MESSAGE;
 }
 
 // Update account function
@@ -42,88 +40,57 @@ function updateAccount(ID, PASSWORD, ROLE) {
     const acc = mongoose.model("account", Account.schema);
     var check = getter.getAccount(ID);
 
-    if (check instanceof Error) {
-        return check;
+    if (check == MSG.ERROR_MESSAGE) {
+        return MSG.ERROR_MESSAGE;
     }
 
-    if (check != null) {
+    if (check != MSG.EMPTY_MESSAGE) {
         acc.updateOne({"id" : ID}, {$set : {
             "password" : PASSWORD,
             "role" : ROLE
         }});
-        msg = "success"
-        return msg;
+        return MSG.SUCCESS_MESSAGE;
     } else {
-        return null;
+        return MSG.EMPTY_MESSAGE;
     }
 }
 
 // Create new Profile for account function
 function createProfile(id, role, name, birthday, address, gender, mail, phone, subject) {
 
-    if (!id) {
-        // req.flash("error", "Please fill in an ID");
-        msg = "Please fill in an ID";
-        return msg;
-    }
-    if (!mail) {
-        // req.flash("error", "Please fill in an email");
-        msg = "Please fill in an email";
-        return msg;
-    }
-    if (!name) {
-        // req.flash("error", "Please fill in a name");
-        msg = "Please fill in a name";
-        return msg;
-    }
-    if(!birthday) {
-        // req.flash("error", "Please fill in a birthday");
-        msg = "Please fill in a birthday";
-        return msg;
-    }
-    if (!phone ) {
-        // req.flash("error", "Please fill in a phone number");
-        msg = "Please fill in a phone number";
-        return msg;
-    }
-    if (!gender) {
-        // req.flash("error", "Please fill in a gender");
-        msg = "Please fill in a gender";
-        return msg;
-    }
     var info = mongoose.model("info", Info.schema);
 
-    msg = info.findOne({"id":id}, function(err, result) {
-        if (err) {return err;}
+    var check = info.findOne({"id":id}, function(err, result) {
+        if (err) {return MSG.ERROR_MESSAGE;}
         if (result) {
             // req.flash("error", "ID's already existed");
-            return "Dupplicate student ID";
+            return MSG.DUPPLICATE_MESSAGE;
         }
 
         info.findOne({"mail":mail}, function(err, result) {
-            if (err) {return err;}
+            if (err) {return MSG.ERROR_MESSAGE;}
             if (result) {
                 // req.flash("error", "There's already an account with this email");
-                return "Dupplicate email";
+                return MSG.DUPPLICATE_MESSAGE;
             }
 
             info.findOne({"phone":phone}, function(err, result) {
-                if (err) {return err;}
+                if (err) {return MSG.ERROR_MESSAGE;}
                 if (result) {
                     // req.flash("error", "There's already an account with this phone number");
-                    return "Dupplicate phone number";
+                    return MSG.DUPPLICATE_MESSAGE;
                 }
             });    
         });
-        return "success";
+        return MSG.SUCCESS_MESSAGE;
     })
 
-    if (msg instanceof Error) {
-        return msg;
+    if (check == MSG.ERROR_MESSAGE) {
+        return MSG.ERROR_MESSAGE;
     }
 
-    if (msg != "success") {
-        return msg;
+    if (check != MSG.SUCCESS_MESSAGE) {
+        return MSG.ERROR_MESSAGE;
     }
 
     const profile = mongoose.model("info", Info.schema);
@@ -139,8 +106,7 @@ function createProfile(id, role, name, birthday, address, gender, mail, phone, s
         subject:subject
     })
     newProfile.save();
-    msg = "success";
-    return msg;
+    return MSG.SUCCESS_MESSAGE;
 }
 
 // Update profile function
@@ -148,11 +114,11 @@ function updateProfile(id, role, name, birthday, address, gender, mail, phone, s
     const info = mongoose.model("info", Info.schema);
 
     var check = getter.getInfo(id);
-    if (check instanceof Error) {
-        return check;
+    if (check == MSG.ERROR_MESSAGE) {
+        return MSG.ERROR_MESSAGE;
     }
 
-    if (check != null) {
+    if (check != MSG.EMPTY_MESSAGE) {
         info.updateOne({"id" : id}, {$set : {
             "role" : role,
             "name" : name,
@@ -163,10 +129,9 @@ function updateProfile(id, role, name, birthday, address, gender, mail, phone, s
             "phone" : phone,
             "subject" : subject
         }});
-        msg = "success"
-        return msg;
+        return MSG.SUCCESS_MESSAGE;
     } else {
-        return null;
+        return MSG.EMPTY_MESSAGE;
     }
 }
 
@@ -175,13 +140,12 @@ function createTeacherSchedule(nid, id, tkb) {
     const teacher_schedule = mongoose.model("teacher-schedule", Teacher_schedule.schema);
 
     var check = getter.getTeacherSchedule(nid,id);
-    if (check instanceof Error) {
-        return check;
+    if (check == MSG.ERROR_MESSAGE) {
+        return MSG.ERROR_MESSAGE;
     }
 
-    if (check != null) {
-        msg = "Dupplicate ID"
-        return msg;
+    if (check != MSG.EMPTY_MESSAGE) {
+        return MSG.DUPPLICATE_MESSAGE;
     } else {
         var newSchedule = new teacher_schedule({
             nid : nid,
@@ -192,8 +156,7 @@ function createTeacherSchedule(nid, id, tkb) {
         })
 
         newSchedule.save();
-        msg = "success"
-        return msg;
+        return MSG.SUCCESS_MESSAGE;
     }   
 }
 
@@ -202,11 +165,11 @@ function updateTeacherSchedule(nid, id, _class) {
     const teacher_schedule = mongoose.model("teacher-schedule", Teacher_schedule.schema);
 
     var check = getter.getTeacherSchedule(nid, id);
-    if (check instanceof Error) {
-        return check;
+    if (check == MSG.ERROR_MESSAGE) {
+        return MSG.ERROR_MESSAGE;
     }
 
-    if (check != null) {
+    if (check != MSG.EMPTY_MESSAGE) {
         teacher_schedule.findOneAndUpdate({
             "nid" : nid,
             "schedule.id" : id
@@ -214,7 +177,7 @@ function updateTeacherSchedule(nid, id, _class) {
             "schedule._class" : _class
         }})
     } else {
-        return null;
+        return MSG.EMPTY_MESSAGE;
     }
 }
 
@@ -225,13 +188,12 @@ function createClass(id, className, member) {
     const _class = mongoose.model("class", Class.schema);
 
     var check = getter.getClass(id);
-    if (check instanceof Error) {
-        return check;
+    if (check == MSG.ERROR_MESSAGE) {
+        return MSG.ERROR_MESSAGE;
     }
     
-    if (check != null) {
-        msg = "dupplicate class ID";
-        return msg;
+    if (check != MSG.EMPTY_MESSAGE) {
+        return MSG.DUPPLICATE_MESSAGE;
     }
 
     var newClass = new _class({
@@ -241,8 +203,7 @@ function createClass(id, className, member) {
     })
 
     newClass.save();
-    msg = "success";
-    return msg;
+    return MSG.SUCCESS_MESSAGE;
 }
 
 // Update Class Function (PENDING)
@@ -250,11 +211,11 @@ function updateClass(id, className, member) {
     const _class = mongoose.model("class", Class.schema);
     var check = getter.getClass(id);
 
-    if (check instanceof Error) {
-        return check;
+    if (check == MSG.ERROR_MESSAGE) {
+        return MSG.ERROR_MESSAGE;
     }
 
-    if (check != null) {
+    if (check != MSG.EMPTY_MESSAGE) {
         _class.updateOne({
             //"nid" : nid,
             "classlist.id" : id 
@@ -262,10 +223,9 @@ function updateClass(id, className, member) {
             "className" : className,
             "member" : member
         });
-        msg = "success"
-        return msg;
+        return MSG.SUCCESS_MESSAGE;
     } else {
-        return null;
+        return MSG.DUPPLICATE_MESSAGE;
     }
 }
 // NEED FIXING (DONE)
@@ -274,13 +234,12 @@ function createGrade(nid, id, result) {
     const grade = mongoose.model("grade", Grade.schema);
 
     var check = getter.getGrade(nid, id);
-    if (check instanceof Error) {
-        return check;
+    if (check == MSG.ERROR_MESSAGE) {
+        return MSG.ERROR_MESSAGE;
     }
 
-    if (check != null) {
-        msg = "Dupplicate ID"
-        return msg;
+    if (check != MSG.EMPTY_MESSAGE) {
+        return MSG.DUPPLICATE_MESSAGE;
     } else {
         var newGrade = new grade({
             id : id,
@@ -288,8 +247,7 @@ function createGrade(nid, id, result) {
         })
 
         newGrade.save();
-        msg = "success"
-        return msg;
+        return MSG.SUCCESS_MESSAGE;
     }   
 }
 
@@ -299,16 +257,15 @@ function updateGrade(nid, id, result) {
     const grade = mongoose.model("grade", Grade.schema);
 
     var check = getter.getGrade(nid, id);
-    if (check instanceof Error) {
-        return check;
+    if (check == MSG.ERROR_MESSAGE) {
+        return MSG.ERROR_MESSAGE;
     }
 
-    if (check != null) {
+    if (check != MSG.EMPTY_MESSAGE) {
         grade.updateOne({"id" : id}, {"result" : result});
-        msg = "success"
-        return msg;
+        return MSG.SUCCESS_MESSAGE;
     } else {
-        return null;
+        return MSG.DUPPLICATE_MESSAGE;
     }
 }
 
@@ -319,13 +276,12 @@ function createRule(nid, numStudent,numStudent_max,numClass10,numClass11,numClas
     
     var check = getter.getRule(nid);
 
-    if (check instanceof Error) {
-        return check;
+    if (check == MSG.ERROR_MESSAGE) {
+        return MSG.ERROR_MESSAGE;
     }
 
-    if (check != null) {
-        msg = "dupplicate rule ID";
-        return msg;
+    if (check != MSG.EMPTY_MESSAGE) {
+        return MSG.DUPPLICATE_MESSAGE;
     }
 
     var newRule=new rule({
@@ -356,11 +312,11 @@ function updateRule(nid, numStudent,numStudent_max,numClass10,numClass11,numClas
     
     var check = getter.getRule(nid);
 
-    if (check instanceof Error) {
-        return check;
+    if (check == MSG.ERROR_MESSAGE) {
+        return MSG.ERROR_MESSAGE;
     }
 
-    if (check != null) {
+    if (check != MSG.EMPTY_MESSAGE) {
         rule.updateOne({
             nid : nid
         },{$set: {
@@ -381,7 +337,7 @@ function updateRule(nid, numStudent,numStudent_max,numClass10,numClass11,numClas
             }
         }})
     } else {
-        return null;
+        return MSG.EMPTY_MESSAGE;
     }
 }
 
@@ -392,13 +348,12 @@ function createSchoolYear(YEAR, semester, nid) {
 
     var check = getter.getSchoolYear(nid);
 
-    if (check instanceof Error) {
-        return check;
+    if (check == MSG.ERROR_MESSAGE) {
+        return MSG.ERROR_MESSAGE;
     }
 
-    if (check != null) {
-        msg = "Dupplicate year ID"
-        return msg;
+    if (check != MSG.EMPTY_MESSAGE) {
+        return MSG.DUPPLICATE_MESSAGE;
     } else {
         var newYear = new year({
             year : YEAR,
@@ -407,8 +362,7 @@ function createSchoolYear(YEAR, semester, nid) {
         })
 
         newYear.save();
-        msg = "success";
-        return msg;
+        return MSG.SUCCESS_MESSAGE;
     }
 }
 
@@ -418,17 +372,17 @@ function updateSchoolYear(YEAR, semester, nid) {
     
     var check = getter.getRule(nid);
 
-    if (check instanceof Error) {
-        return check;
+    if (check == MSG.ERROR_MESSAGE) {
+        return MSG.ERROR_MESSAGE;
     }
 
-    if (check != null) {
+    if (check != MSG.EMPTY_MESSAGE) {
         year.updateOne({nid : nid}, {$set: {
             "year" : YEAR,
             "semester" : semester
         }})
     } else {
-        return null;
+        return MSG.EMPTY_MESSAGE;
     }
 }
 

@@ -8,6 +8,7 @@ const poster = require("../package/postFunctions").controller;
 const getter = require("../package/getFunctions").controller;
 const session = require("../../session").session;
 const auth = require("../../session").auth;
+const MSG = require("../package/defineMessage").msg;
 
 router.use(express.json())
 

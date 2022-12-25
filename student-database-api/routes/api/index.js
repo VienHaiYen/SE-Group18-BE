@@ -9,6 +9,7 @@ const poster = require("../package/postFunctions").controller;
 const getter = require("../package/getFunctions").controller;
 const session = require("../../session").session;
 const auth = require("../../session").auth;
+const MSG = require("../package/defineMessage").msg;
 
 router.use(express.json());
 // Link to other routers here
@@ -44,7 +45,7 @@ router.get("/grade", (req, res) => {
         })
     }
     else {
-        
+        // DEFINE FUNCTION HERE
     }
 }) 
 
@@ -55,7 +56,7 @@ router.get("/grade", (req, res) => {
 //         })
 //     }
 //     else {
-        
+//    
 //     }
 // })
 
@@ -66,7 +67,7 @@ router.get("/about", (req, res) => {
         })
     }
     else {
-        
+        // DEFINE FUNCTION HERE
     }
 })
 
@@ -76,7 +77,7 @@ router.get("/teacher-schedule", function(req,res) {
             "message" : "You are not a teacher or an admin"
         })
     } else {
-
+        // DEFINE FUNCTION HERE
     }
 }) 
 
@@ -86,7 +87,7 @@ router.get("/class-list", (req, res) => {
             "message" : "You are not a teacher or an admin"
         })
     } else {
-
+        // DEFINE FUNCTION HERE
     }
 })
 
@@ -99,7 +100,7 @@ router.post("/about", (req, res) => {
         })
     }
     else {
-        
+        // DEFINE FUNCTION HERE
     }
 })
 

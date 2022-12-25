@@ -8,6 +8,7 @@ const Info = require("../../models/info");
 const Rule = require("../../models/rule");
 const Schoolyear = require("../../models/schoolyear");
 const teacher_schedule = require("../../models/schedule_teacher");
+const msg = require("./defineMessage").msg;
 
 function getInfo(id, role) {
     const info = mongoose.model("info", Info.schema);
@@ -19,8 +20,8 @@ function getInfo(id, role) {
             "role" : role
         }
     ]}, (err, result) => {
-        if (err) return err;
-        if (!result) return null;
+        if (err) return msg.ERROR_MESSAGE;
+        if (!result) return msg.EMPTY_MESSAGE;
         return result;
     })
     return result;
@@ -33,8 +34,8 @@ function getTeacherSchedule(nid, id) {
         {"nid" : nid},
         {"schedule.id" : id}
     ]}, (err, result) => {
-        if (err) return err;
-        if (!result) return null;
+        if (err) return msg.ERROR_MESSAGE;
+        if (!result) return msg.EMPTY_MESSAGE;
         return result;
     })
 
@@ -47,8 +48,8 @@ function getClass(id) {
         // {"nid" : nid},
         {"classlist.id" : id}
     ]}, (err, result) => {
-        if (err) return err;
-        if (!result) return null;
+        if (err) return msg.ERROR_MESSAGE;
+        if (!result) return msg.EMPTY_MESSAGE;
         return result;
     })
     return result;
@@ -60,8 +61,8 @@ function getGrade(nid, id) {
         {"nid" : nid},
         {"point.id" : id}
     ]}, (err, result) => {
-        if (err) return err;
-        if (!result) return null;
+        if (err) return msg.ERROR_MESSAGE;
+        if (!result) return msg.EMPTY_MESSAGE;
         return result;
     })
     return result;
@@ -70,8 +71,8 @@ function getGrade(nid, id) {
 function getRule(nid) {
     const rule = mongoose.model("rule", Rule.schema);
     var result = rule.find({"nid" : nid} , (err, result) => {
-        if (err) return err;
-        if (!result) return null;
+        if (err) return msg.ERROR_MESSAGE;
+        if (!result) return msg.EMPTY_MESSAGE;
         return result;
     })
     return result;
@@ -80,8 +81,8 @@ function getRule(nid) {
 function getSchoolYear(nid) {
     const year = mongoose.model("Schoolyear", Schoolyear.schema);
     var result = year.findOne({"nid" : nid} , (err, result) => {
-        if (err) return err;
-        if (!result) return null;
+        if (err) return msg.ERROR_MESSAGE;
+        if (!result) return msg.EMPTY_MESSAGE;
         return result;
     })
     return result;
@@ -90,8 +91,8 @@ function getSchoolYear(nid) {
 function getAccount(id) {
     const acc = mongoose.model("account", Account.schema);
     var result = acc.findOne({"id" : id}, (err, result) => {
-        if (err) return err;
-        if (!result) return null;
+        if (err) return msg.ERROR_MESSAGE;
+        if (!result) return msg.EMPTY_MESSAGE;
         return result;
     })
     return result;
