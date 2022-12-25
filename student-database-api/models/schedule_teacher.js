@@ -6,8 +6,8 @@ var teacherScheduleSchema = new mongoose.Schema({
         unique:true
     },
     schedule:[{
-        id:{type:String, required:true,unique:true},
-        _class:[{type:String,required:true,unique:true}]
+        id:{type:String,required:true,unique:true},
+        _class:[{type:String,unique:true}]
     }]
 });
 

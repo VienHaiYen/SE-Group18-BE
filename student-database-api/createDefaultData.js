@@ -7,6 +7,7 @@ const Grade = require("./models/grade");
 const Info = require("./models/info");
 const Rule = require("./models/rule");
 const Schoolyear = require("./models/schoolyear");
+const Teacher_schedule = require("./models/schedule_teacher");
 
 var router = express();
 
@@ -203,7 +204,32 @@ function createInfo(ID, ROLE, NAME, BIRTHDAY, ADDRESS, GENDER, MAIL, PHONE, _CLA
 
 // }
 
+function createSchedule(NID, ID, _CLASS) {
 
+    // define that "acc" is a schema of "Account"
+    const schedule = mongoose.model("scheduleTeacher", Teacher_schedule.schema);
+
+    // create a new object with the parameters provide to the function
+    var newSchedule = new schedule({
+        nid: NID,
+        schedule:{
+            id: ID,
+            _class: _CLASS
+        }
+    });
+
+    // save the object to MongoDB
+    newSchedule.save();
+}
+
+function updateSchedule(NID, ID, _CLASS){
+    const schedule = mongoose.model("scheduleTeacher", Teacher_schedule.schema);
+    var newObject = {
+        id: ID,
+        _class: _CLASS
+    };
+    schedule.updateOne({nid:NID},{$push:{schedule:newObject}});
+}
 
 async function main() {
 
@@ -211,11 +237,28 @@ async function main() {
     await mongoose.connect(param.DATABASE);
 
     // call the function
-    createAccount("123", "123", "student"); 
-    createAccount("456", "123", "teacher"); 
-    createAccount("789", "123", "admin"); 
-    createInfo("123","student","test1","04/05/2002","HO CHI MINH","male","test1@gmail.com","0123456789","11a10",null);
-    createInfo("456","teacher","test2","04/05/2002","HO CHI MINH","female","test2002@gmail.com","0123456789",null,"Toan");
-    createInfo("789","admin","test3","04/05/2002","HO CHI MINH","male","test3@gmail.com","0123456789",null,null);
+    // createAccount("19200001", "123", "student");
+    // createInfo("19200001","student","test1","04/05/2002","HO CHI MINH","male","19200001@gmail.com","0123456789","c101",null);
+    // createSchedule("19201","t001",["c101","c102","c103"]);
+    // createSchedule("19201","t002",["c111","c112","c121"]);
+    // createSchedule("19201","t003",["c104","c113","c122"]);
+    // createSchedule("19201","t004",["c101","c104","c112","c113"]);
+    // createSchedule("19201","t005",["c102","c111"]);
+    // createSchedule("19201","t006",["c103","c121","c122"]);
+    // createSchedule("19201","t007",["c101","c104","c111"]);
+    // createSchedule("19201","t008",["c102","c103","c112","c113","c121","c122"]);
+    // createSchedule("19201","t009",["c101","c102","c104","c112","c122"]);
+    // createSchedule("19201","t010",["c103","c111","c113","121"]);
+    // createSchedule("19201","t011",["c101","c104","c111","c113","c121"]);
+    // createSchedule("19201","t012",["c102","c103","c112","c122"]);
+    // createSchedule("19201","t013",["c101","c103","c111","c113","c122"]);
+    // createSchedule("19201","t014",["c102","c104","c112","c121"]);
+    // createSchedule("19201","t015",["c101","c103","c112","c121"]);
+    // createSchedule("19201","t016",["c102","c104","c111","c113","c122"]);
+    // createSchedule("19201","t017",["c101","c102","c103","c104", "c121"]);
+    // createSchedule("19201","t018",["c111","c112","c113", "c122"]);
+    // createSchedule("19201","t019",["c101","c102","c103", "c111","c112","c122"]);
+    // createSchedule("19201","t020",["c104","c113", "c121"]);
+
     return 0;
 }
