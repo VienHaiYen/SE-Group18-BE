@@ -53,7 +53,7 @@ router.post("/login", (req,res) => {
                 sessions[sessionId] = {id, userId: role};
 
                 res.set("Set-Cookie", `session=${sessionId}`);
-                console.log(`${id} logged in`);
+                console.log(`${id} logged in as ${sessions[sessionId].userId}`);
 
                 const info = mongoose.model("info", Info.schema);
                 var displayName; 
@@ -107,7 +107,7 @@ function ensureAuthenticated(req, res, next) {
 function ensureAdmin(req, res, next) {
     var sessionId = req.headers.cookie?.split('=')[1];
     const userSession = sessions[sessionId];
-    if (!(userSession.userId == "Admin")) {
+    if (!userSession || !(userSession.userId == "admin")) {
         return false;
     }
     else {
@@ -118,7 +118,7 @@ function ensureAdmin(req, res, next) {
 function ensureTeacher(req, res, next) {
     var sessionId = req.headers.cookie?.split('=')[1];
     const userSession = sessions[sessionId];
-    if (!(userSession.userId == "Teacher")) {
+    if (!userSession || !(userSession.userId == "teacher")) {
         return false;
     }
     else {
@@ -129,7 +129,7 @@ function ensureTeacher(req, res, next) {
 function ensureStudent(req, res, next) {
     var sessionId = req.headers.cookie?.split('=')[1];
     const userSession = sessions[sessionId];
-    if (!(userSession.userId == "Student")) {
+    if (!userSession || !(userSession.userId == "student")) {
         return false;
     }
     else {
@@ -139,5 +139,5 @@ function ensureStudent(req, res, next) {
 
 module.exports = {
     session : router,
-    auth : {ensureAuthenticated, ensureAdmin: ensureAdmin, ensureTeacher, ensureStudent}
+    auth : {ensureAuthenticated, ensureAdmin, ensureTeacher, ensureStudent}
 };

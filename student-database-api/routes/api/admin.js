@@ -72,6 +72,33 @@ router.get("/teacher-list", function(req, res) {
     }
 })
 
+router.get("/about/:id", (req, res) => {
+    if (!auth.ensureAdmin(req)) {
+        return res.status(401).send({
+            "message" : "You are not an admin"
+        });
+    }
+    else {
+        var {id} = req.params;
+        console.log(id);
+        const query = mongoose.model("info", Info.schema);
+        query.findOne({id : id}, (err, info) => {
+            if (err) {
+                return res.status(500).send({
+                    "message" : "unexpected error"
+                })
+            }
+            if (!info) {
+                return res.status(404).send({
+                    "message" : "record not found"
+                })
+            }    
+
+            return res.status(200).send(info)
+        })
+    }
+})
+
 // POST
 router.post("/input-student", function(req, res, next) {
     if (!auth.ensureAdmin(req)) {
