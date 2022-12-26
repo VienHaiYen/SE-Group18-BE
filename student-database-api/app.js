@@ -7,6 +7,7 @@ const passport = require("passport");
 const session = require("express-session");
 const flash = require("connect-flash");
 const cors = require("cors");
+
 // Custom-made modules
 const param = require("./params/params");
 // const session = require("./session");
@@ -33,7 +34,7 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(flash());
-app.use(cors())
+
 // app.use("/", require("./routes/web"));
 app.use("/api", require("./routes/api"));
 app.use("/", require("./session").session)
