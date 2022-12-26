@@ -2,11 +2,15 @@
 
 const express = require("express");
 const { default: mongoose } = require("mongoose");
-const Account = require("../../models/account");
 const router = express.Router();
+const Account = require("../../models/account");
+const Class = require("../../models/class");
+const Grade = require("../../models/grade");
 const Info = require("../../models/info");
+const Rule = require("../../models/rule");
+const Schoolyear = require("../../models/schoolyear");
+const teacher_schedule = require("../../models/schedule_teacher");
 const poster = require("../package/postFunctions").controller;
-const getter = require("../package/getFunctions").controller;
 const MSG = require("../package/defineMessage").msg;
 const session = require("../../session").session;
 const auth = require("../../session").auth;
@@ -22,23 +26,24 @@ router.get("/rule", function(req, res) {
         });
     } else {
         var nid = req.body.nid;
-        var result = getter.getRule(nid);
 
-        if (result == MSG.ERROR_MESSAGE) {
-            return res.status(500).send({
-                "message" : "unexpected error"
-            })
-        }
-
-        if (result == MSG.EMPTY_MESSAGE) {
-            return res.status(404).send({
-                "message" : "record not found"
-            })
-        }
-
-        return res.status(200).send({
-            result
-        })        
+        Rule.findOne({nid : nid}, (err, rule) => {
+            if (err) {
+                return res.status(500).send({
+                    "message" : "unexpected error"
+                })
+            }
+    
+            if (!rule) {
+                return res.status(404).send({
+                    "message" : "record not found"
+                })
+            }
+    
+            return res.status(200).send(
+                rule
+            )    
+        })
     }
 })
 

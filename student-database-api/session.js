@@ -56,16 +56,17 @@ router.post("/login", (req,res) => {
                 console.log(`${id} logged in`);
 
                 const info = mongoose.model("info", Info.schema);
-                displayName = info.findOne({"id" : id}, "name");
-
-                displayLayout = layout(role);
-                
-                return res.status(200).send({
-                    "name" : displayName,
-                    "display" : [
-                        displayLayout
-                    ]
-                })
+                var displayName; 
+                info.findOne({"id" : id}, "name", (err, result) => {
+                    displayName = result["name"];
+                    displayLayout = layout(role);
+                    return res.status(200).send({
+                        "name" : displayName,
+                        "display" : [
+                            displayLayout
+                        ]
+                    })
+                });         
             }
             else {
                 return res.status(418).send({
@@ -74,8 +75,6 @@ router.post("/login", (req,res) => {
             }
         })
     })
-
-
 })  
 
 router.post("/logout", (req, res) => {
@@ -105,7 +104,7 @@ function ensureAuthenticated(req, res, next) {
     }
 }
 
-function enSureAdmin(req, res, next) {
+function ensureAdmin(req, res, next) {
     var sessionId = req.headers.cookie?.split('=')[1];
     const userSession = sessions[sessionId];
     if (!(userSession.userId == "Admin")) {
@@ -140,5 +139,5 @@ function ensureStudent(req, res, next) {
 
 module.exports = {
     session : router,
-    auth : {ensureAuthenticated, ensureAdmin: enSureAdmin, ensureTeacher, ensureStudent}
+    auth : {ensureAuthenticated, ensureAdmin: ensureAdmin, ensureTeacher, ensureStudent}
 };
