@@ -28,11 +28,11 @@ router.use(require("./student"));
 router.get("/viewDev", function(req, res) {
     if(auth.ensureAuthenticated(req)) {    
         res.status(200).send({
-            "Vien Hai Hien" : "MSSV",
-            "Trinh Le Nguyen Vu": "MSSV",
-            "Phuong Linh":"MSSV",
-            "Le Minh Tri":"MSSV",
-            "Thinh Ngo":"MSSV",
+            "Vien Hai Hien" : "20120633",
+            "Trinh Le Nguyen Vu": "20120630",
+            "Tran Thi Phuong Linh":"20120521",
+            "Le Minh Tri":"20120634",
+            "Thinh Ngo":"20120586",
         })
     }
     else {

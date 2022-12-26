@@ -66,7 +66,7 @@ router.post("/login", (req,res) => {
                             displayLayout
                         ]
                     })
-                });         
+                });
             }
             else {
                 return res.status(418).send({
