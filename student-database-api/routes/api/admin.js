@@ -56,7 +56,7 @@ router.get("/teacher-list", function(req, res) {
         var result;
 
         const info = mongoose.model("info", Info.schema);
-        info.find({"role" : "teacher"}, (err, data) => {
+        info.find({role : "teacher"}, (err, data) => {
             if (err) {
                 return res.status(500).send({
                     "message" : "Unexpected Error"
