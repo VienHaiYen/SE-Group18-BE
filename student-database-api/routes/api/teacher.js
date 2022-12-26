@@ -14,6 +14,7 @@ const poster = require("../package/postFunctions").controller;
 const session = require("../../session").session;
 const auth = require("../../session").auth;
 const MSG = require("../package/defineMessage").msg;
+const thisYear = require("../package/defineSyntax");
 
 
 router.use(express.json());
