@@ -1,42 +1,88 @@
 // Admin
-const admin_layout = {
-    home : "/home",
-    grade : "/grade",
-    schedule : "/schedule",
-    input_grade : "/input-grade",
-    input_student : "/input-student",
-    class_list : "/class-list",
-    teacher_schedule : "/teacher-schedule",
-    rule : "/rule"
-}
-
+const admin_layout = [
+  {
+    to: "/home",
+    label: "Trang chủ",
+  },
+  {
+    to: "/grade",
+    label: "Điểm số",
+  },
+  {
+    to: "/schedule",
+    label: "Thời khóa biểu",
+  },
+  {
+    to: "/input-student",
+    label: "Thêm học sinh",
+  },
+  {
+    to: "/class-list",
+    label: "Danh sách lớp",
+  },
+  {
+    to: "/teacher-list",
+    label: "Danh sách giáo viên",
+  },
+  {
+    to: "/teacher-schedule",
+    label: "Lịch dạy",
+  },
+  {
+    to: "/rule",
+    label: "Quy định",
+  },
+];
 
 // Teacher
 
-const teacher_layout = {
-    about : "/about",
-    grade : "/grade",
-    input_grade : "/input-grade",
-    class_list : "/class-list",
-    teacher_schedule : "/teacher-schedule",
-}
-
+const teacher_layout = [
+  {
+    to: "/about",
+    label: "Thông tin",
+  },
+  {
+    to: "/grade",
+    label: "Điểm số",
+  },
+  {
+    to: "/input-grade",
+    label: "Nhập điểm cho học sinh",
+  },
+  {
+    to: "/class-list",
+    label: "Danh sách lớp",
+  },
+  {
+    to: "/teacher-schedule",
+    label: "Lịch dạy",
+  },
+];
 
 // Student
 
-const student_layout = {
-    about : "/about",
-    grade : "/grade",
-    schedule : "/schedule",
-}
+const student_layout = [
+  {
+    to: "/about",
+    label: "Thông tin ",
+  },
+  {
+    to: "/grade",
+    label: "Điểm số",
+  },
+  {
+    to: "/schedule",
+    label: "Thời khóa biểu",
+  },
+];
 
-LAYOUT = {}
+LAYOUT = {};
 LAYOUT["admin"] = admin_layout;
 LAYOUT["teacher"] = teacher_layout;
 LAYOUT["student"] = student_layout;
 
 function layout(user) {
-    return LAYOUT[user];
+  return LAYOUT[user];
 }
 
 module.exports = layout;
