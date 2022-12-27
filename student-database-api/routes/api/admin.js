@@ -16,6 +16,7 @@ const session = require("../../session").session;
 const auth = require("../../session").auth;
 const thisYear = require("../package/defineSyntax").getYear;
 const genZero = require("../package/defineSyntax").genZero;
+const cookies = require("../../session").cookie;
 
 router.use(express.json());
 

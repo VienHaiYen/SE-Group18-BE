@@ -17,6 +17,7 @@ const session = require("../../session").session;
 const auth = require("../../session").auth;
 const MSG = require("../package/defineMessage").msg;
 const thisYear = require("../package/defineSyntax");
+const cookies = require("../../session").cookie;
 
 router.use(express.json());
 // Link to other routers here
@@ -27,7 +28,8 @@ router.use(require("./student"));
 
 // GET
 router.get("/viewDev", function(req, res) {
-    if(auth.ensureAuthenticated(req)) {    
+    userSession = auth.ensureAuthenticated(req);
+    if(userSession) {    
         res.status(200).send({
             "Vien Hai Hien" : "20120633",
             "Trinh Le Nguyen Vu": "20120630",
@@ -46,7 +48,8 @@ router.get("/viewDev", function(req, res) {
 
 
 router.get("/grade", (req, res) => {
-    if(!auth.ensureAuthenticated(req)) {    
+    userSession = auth.ensureAuthenticated(req);
+    if(!userSession) {    
         res.status(401).send({
             "message" : "You are not logged in"
         })
@@ -157,13 +160,14 @@ router.get("/grade", (req, res) => {
 // })
 
 router.get("/about", (req, res) => {
-    if(!auth.ensureAuthenticated(req)) {    
+    userSession = auth.ensureAuthenticated(req);
+    if(!userSession) {    
         res.status(401).send({
             "message" : "You are not logged in"
         })
     }
     else {
-        var id = req.body.id;
+        var id = cookies[userSession];
         Info.findOne({id : id}, (err, info) => {
             if (err) {
                 return res.status(500).send({

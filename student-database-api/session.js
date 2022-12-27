@@ -100,7 +100,7 @@ function ensureAuthenticated(req, res, next) {
         return false
     }
     else {
-        return true;
+        return userSession;
     }
 }
 
@@ -111,7 +111,7 @@ function ensureAdmin(req, res, next) {
         return false;
     }
     else {
-        return true;
+        return userSession;
     }
 }
 
@@ -122,7 +122,7 @@ function ensureTeacher(req, res, next) {
         return false;
     }
     else {
-        return true;
+        return userSession;
     }
 }
 
@@ -133,11 +133,12 @@ function ensureStudent(req, res, next) {
         return false;
     }
     else {
-        return true;
+        return userSession;
     }
 }
 
 module.exports = {
     session : router,
-    auth : {ensureAuthenticated, ensureAdmin, ensureTeacher, ensureStudent}
+    auth : {ensureAuthenticated, ensureAdmin, ensureTeacher, ensureStudent},
+    cookie : sessions
 };
