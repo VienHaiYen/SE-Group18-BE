@@ -167,7 +167,7 @@ router.get("/about", (req, res) => {
         })
     }
     else {
-        var id = cookies[userSession];
+        var id = userSession.id;
         Info.findOne({id : id}, (err, info) => {
             if (err) {
                 return res.status(500).send({
