@@ -51,13 +51,15 @@ router.post("/login", (req,res) => {
 
                 const sessionId = uuidv4();
                 sessions[sessionId] = {id, userId: role};
+                console.log(sessionId);
 
-                res.set("Set-Cookie", `session=${sessionId}`, {
+                res.cookie("id", sessionId,{
                     httpOnly: true,
                     secure: false,
                     path: "/",
                     sameSite: "strict",
-                });
+                })
+
                 console.log(`${id} logged in as ${sessions[sessionId].userId}`);
 
                 const info = mongoose.model("info", Info.schema);
@@ -99,8 +101,11 @@ router.post("/logout", (req, res) => {
 // middleware to check user type
 
 function ensureAuthenticated(req, res, next) {
-    var sessionId = req.headers.cookie?.split('=')[1];
+    console.log(req.cookies.id);
+    var sessionId=req.cookies.id;
+
     const userSession = sessions[sessionId];
+    console.log(userSession)
     if (!userSession) {
         return false
     }
@@ -110,7 +115,8 @@ function ensureAuthenticated(req, res, next) {
 }
 
 function ensureAdmin(req, res, next) {
-    var sessionId = req.headers.cookie?.split('=')[1];
+    console.log(req.cookies.id);
+    var sessionId=req.cookies.id;
     const userSession = sessions[sessionId];
     if (!userSession || !(userSession.userId == "admin")) {
         return false;
@@ -121,7 +127,8 @@ function ensureAdmin(req, res, next) {
 }
 
 function ensureTeacher(req, res, next) {
-    var sessionId = req.headers.cookie?.split('=')[1];
+    console.log(req.cookies.id);
+    var sessionId=req.cookies.id;
     const userSession = sessions[sessionId];
     if (!userSession || !(userSession.userId == "teacher")) {
         return false;
@@ -132,7 +139,8 @@ function ensureTeacher(req, res, next) {
 }
 
 function ensureStudent(req, res, next) {
-    var sessionId = req.headers.cookie?.split('=')[1];
+    console.log(req.cookies.id);
+    var sessionId=req.cookies.id;
     const userSession = sessions[sessionId];
     if (!userSession || !(userSession.userId == "student")) {
         return false;
