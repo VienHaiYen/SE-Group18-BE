@@ -52,7 +52,12 @@ router.post("/login", (req,res) => {
                 const sessionId = uuidv4();
                 sessions[sessionId] = {id, userId: role};
 
-                res.set("Set-Cookie", `session=${sessionId}`);
+                res.set("Set-Cookie", `session=${sessionId}`, {
+                    httpOnly: true,
+                    secure: false,
+                    path: "/",
+                    sameSite: "strict",
+                });
                 console.log(`${id} logged in as ${sessions[sessionId].userId}`);
 
                 const info = mongoose.model("info", Info.schema);
