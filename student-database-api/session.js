@@ -71,7 +71,8 @@ router.post("/login", (req,res) => {
                         "name" : displayName,
                         "display" : [
                             displayLayout
-                        ]
+                        ],
+                        "sid": sessionId
                     })
                 });
             }
@@ -101,8 +102,12 @@ router.post("/logout", (req, res) => {
 // middleware to check user type
 
 function ensureAuthenticated(req, res, next) {
-    console.log(req.cookies.id);
-    var sessionId=req.cookies.id;
+    // console.log(req);
+    // console.log("id: ",req.cookies.id);
+    // var sessionId=req.cookies.id;
+    // console.log(req.headers);
+
+    var sessionId=req.headers.sid;
 
     const userSession = sessions[sessionId];
     console.log(userSession)
