@@ -47,7 +47,7 @@ router.post("/input-grade", function(req,res, next) {
                 })
             }
 
-            var subject = JSON.parse(info)["subject"];
+            var subject = info["subject"];
 
             for (let i = 0; i < member.length; i++) {
                 var msg = poster.updateScoreBySubject(subject, nid , member[i].id, member[i].score);
