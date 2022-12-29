@@ -104,10 +104,10 @@ router.post("/logout", (req, res) => {
 function ensureAuthenticated(req, res, next) {
     // console.log(req);
     // console.log("id: ",req.cookies.id);
-    var sessionId=req.cookies.id;
-    console.log(req.headers);
+    // var sessionId=req.cookies.id;
+    // console.log(req.headers);
 
-    // var sessionId=req.headers.sid;
+    var sessionId=req.headers.sid;
 
     const userSession = sessions[sessionId];
     console.log(userSession)
@@ -120,10 +120,10 @@ function ensureAuthenticated(req, res, next) {
 }
 
 function ensureAdmin(req, res, next) {
-    console.log(req.cookies.id);
-    var sessionId=req.cookies.id;
+    // console.log(req.cookies.id);
+    // var sessionId=req.cookies.id;
 
-    // var sessionId=req.headers.sid;
+    var sessionId=req.headers.sid;
     const userSession = sessions[sessionId];
     if (!userSession || !(userSession.userId == "admin")) {
         return false;
@@ -134,10 +134,10 @@ function ensureAdmin(req, res, next) {
 }
 
 function ensureTeacher(req, res, next) {
-     console.log(req.cookies.id);
-     var sessionId=req.cookies.id;
+    // console.log(req.cookies.id);
+    // var sessionId=req.cookies.id;
 
-    //var sessionId=req.headers.sid;
+    var sessionId=req.headers.sid;
     const userSession = sessions[sessionId];
     if (!userSession || !(userSession.userId == "teacher")) {
         return false;
