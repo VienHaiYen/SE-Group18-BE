@@ -102,47 +102,28 @@ router.get("/grade", (req, res) => {
 
             })
         }
-        else if (subject != null) { // Grade by class
-            Grade.findOne({ $and : [
-                {"nid" : nid},
-                {"point.id" : id}
-            ]}, "result" , (err, grade) => {
+        else if (subject != null) { // Grade by student and subject
+            Grade.findOne({ $and: [
+                {"point.id" : id},
+                {"nid" : nid}
+            ]}, "point.result", (err, result) => {
                 if (err) {
                     return res.status(500).send({
                         "message" : "unexpected error"
                     })
                 }
 
-                if (!grade) {
+                if (!result) {
                     return res.status(404).send({
                         "message" : "record not found"
                     })
                 }
 
-                result = JSON.parse(grade.result)[`${subject}`];
-
-                Class.findOne({id : "id"}, "headteacher", (err, _class) => {
-                    if (err) {
-                        return res.status(500).send({
-                            "message" : "unexpected error"
-                        })
-                    }
-    
-                    if (!_class) {
-                        return res.status(404).send({
-                            "message" : "record not found"
-                        })
-                    }
-
-                    return res.status(200).send({
-                        "grade" : result,
-                        "headteacher" : _class.headteacher
-                    })
-                    
+                point = result.point[0].result[`${subject}`];
+                return res.status(200).send({
+                    point
                 })
-
             })
-
         }
     }
 }) 
@@ -239,18 +220,19 @@ router.get("/teacher-schedule", function(req,res) {
 }) 
 
 router.get("/class-list", (req, res) => {
-    if (!auth.ensureTeacher(req) && !auth.ensureAdmin(req)) {
+    if ((!auth.ensureTeacher(req)) && (!auth.ensureAdmin(req))) {
         return res.status(401).send({
             "message" : "You are not a teacher or an admin"
         })
     } else if (auth.ensureAdmin(req)) {// Admin
         var id = req.body.id;
-        if (id != null) {
-            var nid = req.body.nid;
+        var nid = req.body.nid;
+        if (id == null) {
+            
 
             Class.find({ $and : [
                 {nid : nid}
-            ]}, "headteacher member", (err, _class) => {
+            ]}, "headteacher members", (err, _class) => {
 
                 if (err) {
                     return res.status(500).send({
@@ -270,13 +252,13 @@ router.get("/class-list", (req, res) => {
             })
 
 
-        } else { // Teacher
+        } else { 
 
             const _class = mongoose.model("_class", Class.schema);
-            _class.find({ $and : [
+            _class.findOne({ $and : [
                 {nid : nid},
                 {id : id}
-            ]}, "classname headteacher", (err, _class) => {
+            ]}, "className headteacher", (err, _class) => {
                 if (err) {
                     return res.status(500).send({
                         "message" : "Unexpected Error"
@@ -289,21 +271,20 @@ router.get("/class-list", (req, res) => {
                     })
                 }
     
-                return res.status(200).send({
-                    "classname" : _class.classname,
-                    "headteacher" : _class.headteacher
-                })
+                return res.status(200).send(
+                    _class
+                )
             });
         }
-    } else {
+    } else { // Teacher
         var id = req.body.id;
         var nid = req.body.nid;
 
         const _class = mongoose.model("_class", Class.schema);
-        _class.find({ $and : [
+        _class.findOne({ $and : [
             {nid : nid},
             {id : id}
-        ]}, "member", (err, _class) => {
+        ]}, "members", (err, _class) => {
             if (err) {
                 return res.status(500).send({
                     "message" : "Unexpected Error"
@@ -317,7 +298,7 @@ router.get("/class-list", (req, res) => {
             }
 
             return res.status(200).send(
-                _class.member
+                _class.members
             )
         });
     }

@@ -8,7 +8,7 @@ var classSchema = new mongoose.Schema({
         type:String,
         required: true
     },
-    classname : {
+    className : {
         type:String,
         required:true
     },
@@ -16,7 +16,7 @@ var classSchema = new mongoose.Schema({
         type:String,
         required:true,
     },
-    member: [String]
+    members: [String]
 });
 
 classSchema.index({nid : 1, id : 1}, {unique: true})

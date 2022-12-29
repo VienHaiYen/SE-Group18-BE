@@ -166,21 +166,34 @@ router.post("/input-student", function(req, res, next) {
                 })
             }
 
-            msg = poster.createProfile(id, role, name, birthday, address, gender, mail, phone, _class, subject);
             if (msg == MSG.SUCCESS_MESSAGE) {
-                return res.status(200).send({
-                    "message" : "Successful",
-                    "id" : id
-                });
-            } else if (msg == MSG.ERROR_MESSAGE) {
-                return res.status(500).send({
-                    "message" : "Unexpected Error"
-                })
-            } else {
-                return res.status(418).send({
-                    "message" : "Dupplicate unique infomation"
-                });
+                msg = poster.createProfile(id, role, name, birthday, address, gender, mail, phone, _class, subject);
+                if (msg == MSG.SUCCESS_MESSAGE) {
+
+                    msg = poster.createGrade(thisYear(), id, null);
+                    if (msg == MSG.ERROR_MESSAGE) {
+                        return res.status(500).send({
+                            "message" : "unexpected error"
+                        })
+                    }                   
+
+                    if (msg == MSG.SUCCESS_MESSAGE) {
+                        return res.status(200).send({
+                            "message" : "Successful",
+                            "id" : id
+                        });
+                    }
+                } else if (msg == MSG.ERROR_MESSAGE) {
+                    return res.status(500).send({
+                        "message" : "Unexpected Error"
+                    })
+                } else {
+                    return res.status(418).send({
+                        "message" : "Dupplicate unique infomation"
+                    });
+                }
             }
+
         })
         
     }
@@ -330,15 +343,6 @@ router.post("/teacher-schedule", function(req,res) {
     }
 }) 
 
-router.post("/class-list", (req, res) => {
-    if (!auth.ensureAdmin(req)) {
-        res.status(401).send({
-            "message" : "You are not an admin"
-        })
-    } else {
-        // DEFINE FUNCTION HERE
-    }
-})
 
 
 
