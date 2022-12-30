@@ -14,9 +14,13 @@ const poster = require("../package/postFunctions").controller;
 const MSG = require("../package/defineMessage").msg;
 const session = require("../../session").session;
 const auth = require("../../session").auth;
+<<<<<<< Updated upstream
 const thisYear = require("../package/defineSyntax").getYear;
 const genZero = require("../package/defineSyntax").genZero;
 const cookies = require("../../session").cookie;
+=======
+const multer = require("multer");
+>>>>>>> Stashed changes
 
 router.use(express.json());
 
@@ -290,16 +294,50 @@ router.post("/class-list", function(req, res, next) {
         // DEFINE FUNCTION HERE
     }
 })
+const fileStorageEngine = multer.diskStorage({
+    destination:(req, file, cb) => {
+        cb(null,"schedulefiles")
+    },
+    filename: (req,file,cb) => {
+        cb(null, file.originalname)
+    },
+    fileFilter: (req, file, cb) => {
 
-router.post("/teacher-schedule", function(req,res) {
+        if (file.mimetype !== "application/vnd.ms-excel" || file.mimetype !== "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet") {
+            // To reject a file pass `false` or pass an error
+            cb(new Error(`Forbidden file type`));
+        } else {
+            // To accept the file pass `true`
+            cb(null, true);
+        }
+        cb(null, true);
+      
+    }
+});
+
+const upload = multer({storage: fileStorageEngine});
+
+router.post("/teacher-schedule", upload.single("data"), (req,res) => {
     if (!auth.ensureAdmin(req)) {
         return res.status(401).send({
             "message" : "You are not an admin"
         })
     } else {
-        // DEFINE FUNCTION HERE
+        console.log(req.file);
+        res.send("File uploaded successfully");
     }
-}) 
+    
+    
+})
+// router.post("/teacher-schedule", function(req,res) {
+//     if (!auth.ensureAdmin(req)) {
+//         res.status(401).send({
+//             "message" : "You are not an admin"
+//         })
+//     } else {
+//         // DEFINE FUNCTION HERE
+//     }
+// }) 
 
 // DELETE
 
