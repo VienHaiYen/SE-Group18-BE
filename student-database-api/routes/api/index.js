@@ -56,12 +56,13 @@ router.get("/grade", (req, res) => {
     }
     else {
         // DEFINE FUNCTION HERE
-        var id = req.body.id;
-        var subject = req.body.subject;
-        var nid = req.body.nid;
+        var id = req.query.id;
+        var subject = req.query.subject;
+        var nid = req.query.nid;
 
-        if (subject == null) { // Grade by student
-
+        console.log(id, subject, nid);
+        if (subject == undefined) { // Grade by student
+            console.log('la null');
             Grade.findOne({ $and : [
                 {"nid" : nid},
                 {"point.id" : id}
@@ -74,11 +75,12 @@ router.get("/grade", (req, res) => {
 
                 if (!grade) {
                     return res.status(404).send({
-                        "message" : "record not found"
+                        "message" : "record not found 1"
                     })
                 }
-
+                console.log(456789,grade);
                 Info.findOne({id : "id"}, "name _class", (err, info) => {
+                    console.log(id);
                     if (err) {
                         return res.status(500).send({
                             "message" : "unexpected error"
@@ -87,7 +89,7 @@ router.get("/grade", (req, res) => {
     
                     if (!info) {
                         return res.status(404).send({
-                            "message" : "record not found"
+                            "message" : "record not found 2"
                         })
                     }
 
@@ -97,12 +99,11 @@ router.get("/grade", (req, res) => {
                         "class" : info._class,
                         "result" : grade
                     })
-                    
                 })
 
             })
         }
-        else if (subject != null) { // Grade by student and subject
+        else if (subject != undefined) { // Grade by student and subject
             Grade.findOne({ $and: [
                 {"point.id" : id},
                 {"nid" : nid}
@@ -115,7 +116,7 @@ router.get("/grade", (req, res) => {
 
                 if (!result) {
                     return res.status(404).send({
-                        "message" : "record not found"
+                        "message" : "record not found 3"
                     })
                 }
 
