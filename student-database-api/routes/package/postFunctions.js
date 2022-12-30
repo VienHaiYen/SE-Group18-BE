@@ -54,29 +54,47 @@ function updateAccount(ID, PASSWORD, ROLE) {
 }
 
 // Create new Profile for account function
-function createProfile(id, role, name, birthday, address, gender, mail, phone, _class, subject) {
+function createProfile(id, role, name, birthday, address, gender, mail, phone, _class, subject, res) {
 
     var info = mongoose.model("info", Info.schema);
 
     info.findOne({"id":id}, function(err, result) {
-        if (err) {return MSG.ERROR_MESSAGE;}
+        if (err) {
+            return res.status(500).send({
+                "message" : MSG.ERROR_MESSAGE
+            })
+        }
         if (result) {
             // req.flash("error", "ID's already existed");
-            return MSG.DUPPLICATE_MESSAGE;
+            return res.status(418).send({
+                "message" : MSG.DUPPLICATE_MESSAGE
+            })
         }
 
         info.findOne({"mail":mail}, function(err, result) {
-            if (err) {return MSG.ERROR_MESSAGE;}
+            if (err) {
+                return res.status(500).send({
+                    "message" : MSG.ERROR_MESSAGE
+                })
+            }
             if (result) {
                 // req.flash("error", "There's already an account with this email");
-                return MSG.DUPPLICATE_MESSAGE;
+                return res.status(418).send({
+                    "message" : MSG.DUPPLICATE_MESSAGE
+                })
             }
 
             info.findOne({"phone":phone}, function(err, result) {
-                if (err) {return MSG.ERROR_MESSAGE;}
+                if (err) {
+                    return res.status(500).send({
+                        "message" : MSG.ERROR_MESSAGE
+                    })
+                }
                 if (result) {
                     // req.flash("error", "There's already an account with this phone number");
-                    return MSG.DUPPLICATE_MESSAGE;
+                    return res.status(418).send({
+                        "message" : MSG.DUPPLICATE_MESSAGE
+                    })
                 }           
                 const profile = mongoose.model("info", Info.schema);
                 var newProfile = new profile({
@@ -92,10 +110,11 @@ function createProfile(id, role, name, birthday, address, gender, mail, phone, _
                     subject:subject
                 })
                 newProfile.save();
-                return MSG.SUCCESS_MESSAGE;
+                return res.status(200).send({
+                    "message" : `${id}'s profile created successfully`
+                })
             });    
         });
-        return MSG.SUCCESS_MESSAGE;
     })
 
     

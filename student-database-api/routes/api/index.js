@@ -16,6 +16,8 @@ const poster = require("../package/postFunctions").controller;
 const session = require("../../session").session;
 const auth = require("../../session").auth;
 const MSG = require("../package/defineMessage").msg;
+const thisYear = require("../package/defineSyntax");
+const cookies = require("../../session").cookie;
 
 router.use(express.json());
 // Link to other routers here
@@ -26,8 +28,9 @@ router.use(require("./student"));
 
 // GET
 router.get("/viewDev", function(req, res) {
-    if(auth.ensureAuthenticated(req)) {    
-        res.status(200).send({
+    userSession = auth.ensureAuthenticated(req);
+    if(userSession) {    
+        return res.status(200).send({
             "Vien Hai Hien" : "20120633",
             "Trinh Le Nguyen Vu": "20120630",
             "Tran Thi Phuong Linh":"20120521",
@@ -45,19 +48,21 @@ router.get("/viewDev", function(req, res) {
 
 
 router.get("/grade", (req, res) => {
-    if(!auth.ensureAuthenticated(req)) {    
-        res.status(401).send({
+    userSession = auth.ensureAuthenticated(req);
+    if(!userSession) {    
+        return res.status(401).send({
             "message" : "You are not logged in"
         })
     }
     else {
         // DEFINE FUNCTION HERE
-        var id = req.body.id;
-        var subject = req.body.subject;
-        var nid = req.body.nid;
+        var id = req.query.id;
+        var subject = req.query.subject;
+        var nid = req.query.nid;
 
-        if (subject == null) { // Grade by student
-
+        console.log(id, subject, nid);
+        if (subject == undefined) { // Grade by student
+            console.log('la null');
             Grade.findOne({ $and : [
                 {"nid" : nid},
                 {"point.id" : id}
@@ -70,11 +75,12 @@ router.get("/grade", (req, res) => {
 
                 if (!grade) {
                     return res.status(404).send({
-                        "message" : "record not found"
+                        "message" : "record not found 1"
                     })
                 }
-
-                Info.findOne({id : "id"}, "name _class", (err, info) => {
+                console.log(456789,grade);
+                Info.findOne({"id" : id}, "name _class", (err, info) => {
+                    console.log(id);
                     if (err) {
                         return res.status(500).send({
                             "message" : "unexpected error"
@@ -83,7 +89,7 @@ router.get("/grade", (req, res) => {
     
                     if (!info) {
                         return res.status(404).send({
-                            "message" : "record not found"
+                            "message" : "record not found 2"
                         })
                     }
 
@@ -93,52 +99,32 @@ router.get("/grade", (req, res) => {
                         "class" : info._class,
                         "result" : grade
                     })
-                    
                 })
 
             })
         }
-        else if (subject != null) { // Grade by class
-            Grade.findOne({ $and : [
-                {"nid" : nid},
-                {"point.id" : id}
-            ]}, "result" , (err, grade) => {
+        else if (subject != undefined) { // Grade by student and subject
+            Grade.findOne({ $and: [
+                {"point.id" : id},
+                {"nid" : nid}
+            ]}, "point.result", (err, result) => {
                 if (err) {
                     return res.status(500).send({
                         "message" : "unexpected error"
                     })
                 }
 
-                if (!grade) {
+                if (!result) {
                     return res.status(404).send({
-                        "message" : "record not found"
+                        "message" : "record not found 3"
                     })
                 }
 
-                result = JSON.parse(grade.result)[`${subject}`];
-
-                Class.findOne({id : "id"}, "headteacher", (err, _class) => {
-                    if (err) {
-                        return res.status(500).send({
-                            "message" : "unexpected error"
-                        })
-                    }
-    
-                    if (!_class) {
-                        return res.status(404).send({
-                            "message" : "record not found"
-                        })
-                    }
-
-                    return res.status(200).send({
-                        "grade" : result,
-                        "headteacher" : _class.headteacher
-                    })
-                    
+                point = result.point[0].result[`${subject}`];
+                return res.status(200).send({
+                    point
                 })
-
             })
-
         }
     }
 }) 
@@ -156,13 +142,14 @@ router.get("/grade", (req, res) => {
 // })
 
 router.get("/about", (req, res) => {
-    if(!auth.ensureAuthenticated(req)) {    
-        res.status(401).send({
+    userSession = auth.ensureAuthenticated(req);
+    if(!userSession) {    
+        return res.status(401).send({
             "message" : "You are not logged in"
         })
     }
     else {
-        var id = req.body.id;
+        var id = userSession.id;
         Info.findOne({id : id}, (err, info) => {
             if (err) {
                 return res.status(500).send({
@@ -186,12 +173,12 @@ router.get("/about", (req, res) => {
 
 router.get("/teacher-schedule", function(req,res) {
     if (!auth.ensureTeacher(req) && !auth.ensureAdmin(req)) {
-        res.status(401).send({
+        return res.status(401).send({
             "message" : "You are not a teacher or an admin"
         })
     } else {
-        var id = req.body.id;
-        var nid = req.body.nid;
+        var id = req.query.id;
+        var nid = req.query.nid;
         const ts = mongoose.model("teacher-schedule", Teacher_schedule.schema);
         ts.findOne({$and: [
             {nid : nid},
@@ -234,18 +221,17 @@ router.get("/teacher-schedule", function(req,res) {
 }) 
 
 router.get("/class-list", (req, res) => {
-    if (!auth.ensureTeacher(req) && !auth.ensureAdmin(req)) {
+    if ((!auth.ensureTeacher(req)) && (!auth.ensureAdmin(req))) {
         return res.status(401).send({
             "message" : "You are not a teacher or an admin"
         })
     } else if (auth.ensureAdmin(req)) {// Admin
-        var id = req.body.id;
-        if (id != null) {
-            var nid = req.body.nid;
-
+        var id = req.query.id;
+        var nid = req.query.nid;
+        if (id == undefined) {
             Class.find({ $and : [
                 {nid : nid}
-            ]}, "headteacher member", (err, _class) => {
+            ]}, "id className headteacher members", (err, _class) => {
 
                 if (err) {
                     return res.status(500).send({
@@ -265,13 +251,13 @@ router.get("/class-list", (req, res) => {
             })
 
 
-        } else { // Teacher
+        } else { 
 
             const _class = mongoose.model("_class", Class.schema);
-            _class.find({ $and : [
+            _class.findOne({ $and : [
                 {nid : nid},
                 {id : id}
-            ]}, "classname headteacher", (err, _class) => {
+            ]}, "id className headteacher members", (err, _class) => {
                 if (err) {
                     return res.status(500).send({
                         "message" : "Unexpected Error"
@@ -284,21 +270,20 @@ router.get("/class-list", (req, res) => {
                     })
                 }
     
-                return res.status(200).send({
-                    "classname" : _class.classname,
-                    "headteacher" : _class.headteacher
-                })
+                return res.status(200).send(
+                    _class
+                )
             });
         }
-    } else {
-        var id = req.body.id;
-        var nid = req.body.nid;
+    } else { // Teacher
+        var id = req.query.id;
+        var nid = req.query.nid;
 
         const _class = mongoose.model("_class", Class.schema);
-        _class.find({ $and : [
+        _class.findOne({ $and : [
             {nid : nid},
             {id : id}
-        ]}, "member", (err, _class) => {
+        ]}, "members", (err, _class) => {
             if (err) {
                 return res.status(500).send({
                     "message" : "Unexpected Error"
@@ -312,7 +297,7 @@ router.get("/class-list", (req, res) => {
             }
 
             return res.status(200).send(
-                _class.member
+                _class.members
             )
         });
     }
@@ -322,7 +307,7 @@ router.get("/class-list", (req, res) => {
 
 router.post("/about", (req, res) => {
     if(!auth.ensureAuthenticated(req)) {    
-        res.status(401).send({
+        return res.status(401).send({
             "message" : "You are not logged in"
         })
     }

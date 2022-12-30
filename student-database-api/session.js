@@ -51,8 +51,15 @@ router.post("/login", (req,res) => {
 
                 const sessionId = uuidv4();
                 sessions[sessionId] = {id, userId: role};
+                console.log(sessionId);
 
-                res.set("Set-Cookie", `session=${sessionId}`);
+                res.cookie("id", sessionId,{
+                    httpOnly: true,
+                    secure: false,
+                    path: "/",
+                    sameSite: "strict",
+                })
+
                 console.log(`${id} logged in as ${sessions[sessionId].userId}`);
 
                 const info = mongoose.model("info", Info.schema);
@@ -64,7 +71,8 @@ router.post("/login", (req,res) => {
                         "name" : displayName,
                         "display" : [
                             displayLayout
-                        ]
+                        ],
+                        "sid": sessionId
                     })
                 });
             }
@@ -83,9 +91,9 @@ router.post("/logout", (req, res) => {
             "message" : "You are not logged in"
         })
     };
-    var sessionId = req.headers.cookie?.split('=')[1];
+    var sessionId = req.cookies.id;
     delete sessions[sessionId];
-    res.set('Set-Cookie', 'session=; expires=Thu, 01 Jan 1970 00:00:00 GMT');
+    res.clearCookie("id");
     return res.status(200).send({
         "message" : "Logged out"
     })
@@ -94,50 +102,67 @@ router.post("/logout", (req, res) => {
 // middleware to check user type
 
 function ensureAuthenticated(req, res, next) {
-    var sessionId = req.headers.cookie?.split('=')[1];
+    // console.log(req);
+    // console.log("id: ",req.cookies.id);
+    // var sessionId=req.cookies.id;
+    // console.log(req.headers);
+
+    var sessionId=req.headers.sid;
+
     const userSession = sessions[sessionId];
+    console.log(userSession)
     if (!userSession) {
         return false
     }
     else {
-        return true;
+        return userSession;
     }
 }
 
 function ensureAdmin(req, res, next) {
-    var sessionId = req.headers.cookie?.split('=')[1];
+    // console.log(req.cookies.id);
+    // var sessionId=req.cookies.id;
+
+    var sessionId=req.headers.sid;
     const userSession = sessions[sessionId];
     if (!userSession || !(userSession.userId == "admin")) {
         return false;
     }
     else {
-        return true;
+        return userSession;
     }
 }
 
 function ensureTeacher(req, res, next) {
-    var sessionId = req.headers.cookie?.split('=')[1];
+    // console.log(req.cookies.id);
+    // var sessionId=req.cookies.id;
+
+    var sessionId=req.headers.sid;
     const userSession = sessions[sessionId];
     if (!userSession || !(userSession.userId == "teacher")) {
         return false;
     }
     else {
-        return true;
+        return userSession;
     }
 }
 
 function ensureStudent(req, res, next) {
-    var sessionId = req.headers.cookie?.split('=')[1];
+    // console.log(req.cookies.id);
+    // var sessionId=req.cookies.id;
+
+    var sessionId=req.headers.sid;
     const userSession = sessions[sessionId];
     if (!userSession || !(userSession.userId == "student")) {
         return false;
     }
     else {
-        return true;
+        return userSession;
     }
 }
 
 module.exports = {
     session : router,
-    auth : {ensureAuthenticated, ensureAdmin, ensureTeacher, ensureStudent}
+    auth : {ensureAuthenticated, ensureAdmin, ensureTeacher, ensureStudent},
+    cookie : sessions
 };

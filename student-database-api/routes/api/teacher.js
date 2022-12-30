@@ -14,6 +14,8 @@ const poster = require("../package/postFunctions").controller;
 const session = require("../../session").session;
 const auth = require("../../session").auth;
 const MSG = require("../package/defineMessage").msg;
+const thisYear = require("../package/defineSyntax");
+const cookies = require("../../session").cookie;
 
 
 router.use(express.json());
@@ -23,7 +25,7 @@ router.use(express.json());
 // POST
 router.post("/input-grade", function(req,res, next) {
     if (!auth.ensureTeacher(req)) {
-        res.status(401).send({
+        return res.status(401).send({
             "message" : "You are not a teacher"
         });
     } else {
@@ -45,7 +47,7 @@ router.post("/input-grade", function(req,res, next) {
                 })
             }
 
-            var subject = JSON.parse(info)["subject"];
+            var subject = info["subject"];
 
             for (let i = 0; i < member.length; i++) {
                 var msg = poster.updateScoreBySubject(subject, nid , member[i].id, member[i].score);

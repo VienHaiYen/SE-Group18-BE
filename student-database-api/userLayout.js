@@ -24,10 +24,10 @@ const admin_layout = [
     to: "/teacher-list",
     label: "Danh sách giáo viên",
   },
-  {
-    to: "/teacher-schedule",
-    label: "Lịch dạy",
-  },
+  // {
+  //   to: "/teacher-schedule",
+  //   label: "Lịch dạy",
+  // },
   {
     to: "/rule",
     label: "Quy định",
@@ -53,10 +53,10 @@ const teacher_layout = [
     to: "/class-list",
     label: "Danh sách lớp",
   },
-  {
-    to: "/teacher-schedule",
-    label: "Lịch dạy",
-  },
+  // {
+  //   to: "/teacher-schedule",
+  //   label: "Lịch dạy",
+  // },
 ];
 
 // Student
