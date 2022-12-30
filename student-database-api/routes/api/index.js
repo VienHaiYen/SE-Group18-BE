@@ -79,7 +79,7 @@ router.get("/grade", (req, res) => {
                     })
                 }
                 console.log(456789,grade);
-                Info.findOne({id : "id"}, "name _class", (err, info) => {
+                Info.findOne({"id" : id}, "name _class", (err, info) => {
                     console.log(id);
                     if (err) {
                         return res.status(500).send({
@@ -177,8 +177,8 @@ router.get("/teacher-schedule", function(req,res) {
             "message" : "You are not a teacher or an admin"
         })
     } else {
-        var id = req.body.id;
-        var nid = req.body.nid;
+        var id = req.query.id;
+        var nid = req.query.nid;
         const ts = mongoose.model("teacher-schedule", Teacher_schedule.schema);
         ts.findOne({$and: [
             {nid : nid},
@@ -226,9 +226,9 @@ router.get("/class-list", (req, res) => {
             "message" : "You are not a teacher or an admin"
         })
     } else if (auth.ensureAdmin(req)) {// Admin
-        var id = req.body.id;
-        var nid = req.body.nid;
-        if (id == null) {
+        var id = req.query.id;
+        var nid = req.query.nid;
+        if (id == define) {
             
 
             Class.find({ $and : [
