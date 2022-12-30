@@ -193,12 +193,12 @@ function createInfo(ID, ROLE, NAME, BIRTHDAY, ADDRESS, GENDER, MAIL, PHONE, _CLA
         
 //     })
 // }
-// function createSchoolyear(y,smt,n_id){
-//     const schoolyear=mongoose.model("Schoolyear",SchoolYear.schema);
-//     var newSchoolYear=new schoolyear({
+// function createSchoolyear(y,smt,NID){
+//     const SchoolYear = mongoose.model("Schoolyear", Schoolyear.Schema);
+//     var newSchoolYear=new SchoolYear({
+//         nid:NID,
 //         year:y,
-//         semester:smt,
-//         nid:n_id
+//         semester:smt
 //     });
 //     newSchoolYear.save();
 
@@ -237,6 +237,7 @@ async function main() {
     await mongoose.connect(param.DATABASE);
 
     // call the function
+
     // createAccount("19200001", "123", "student");
     // createInfo("19200001","student","test1","04/05/2002","HO CHI MINH","male","19200001@gmail.com","0123456789","c101",null);
     // createSchedule("19201","t001",["c101","c102","c103"]);
@@ -259,6 +260,7 @@ async function main() {
     // createSchedule("19201","t018",["c111","c112","c113", "c122"]);
     // createSchedule("19201","t019",["c101","c102","c103", "c111","c112","c122"]);
     // createSchedule("19201","t020",["c104","c113", "c121"]);
+
 
     return 0;
 }
