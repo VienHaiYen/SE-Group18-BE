@@ -14,13 +14,10 @@ const poster = require("../package/postFunctions").controller;
 const MSG = require("../package/defineMessage").msg;
 const session = require("../../session").session;
 const auth = require("../../session").auth;
-<<<<<<< Updated upstream
 const thisYear = require("../package/defineSyntax").getYear;
 const genZero = require("../package/defineSyntax").genZero;
 const cookies = require("../../session").cookie;
-=======
 const multer = require("multer");
->>>>>>> Stashed changes
 
 router.use(express.json());
 
