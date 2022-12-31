@@ -221,11 +221,13 @@ router.get("/teacher-schedule", function(req,res) {
 }) 
 
 router.get("/class-list", (req, res) => {
-    if ((!auth.ensureTeacher(req)) && (!auth.ensureAdmin(req))) {
+    var userSessionAdmin = auth.ensureAdmin(req);
+    var userSessionTeacher = auth.ensureTeacher(req);
+    if ((!userSessionAdmin) && (!userSessionTeacher)) {
         return res.status(401).send({
             "message" : "You are not a teacher or an admin"
         })
-    } else if (auth.ensureAdmin(req)) {// Admin
+    } else if (userSessionAdmin) {// Admin
         var id = req.query.id;
         var nid = req.query.nid;
         if (id == undefined) {
@@ -278,28 +280,99 @@ router.get("/class-list", (req, res) => {
     } else { // Teacher
         var id = req.query.id;
         var nid = req.query.nid;
+        var teacherId = userSessionTeacher.id;
 
-        const _class = mongoose.model("_class", Class.schema);
-        _class.findOne({ $and : [
-            {nid : nid},
-            {id : id}
-        ]}, "members", (err, _class) => {
-            if (err) {
-                return res.status(500).send({
-                    "message" : "Unexpected Error"
-                })
-            }
+        if (id == undefined) {
+            Teacher_schedule.findOne({$and: [
+                {"nid" : nid}
+            ]}, "schedule", (err, result) => {
+                if (err) {
+                    return res.status(500).send({
+                        "message" : "unexpected error"
+                    })
+                }
+                if (!result) {
+                    return res.status(404).send({
+                        "message" : "record not found"
+                    })
+                }
 
-            if (!_class) {
-                return res.status(404).send({
-                    "message" : "Record not found"
-                })
-            }
+                data = null;
+                for (let i = 0; i < result.schedule.length; i++) {
+                    console.log(i);
+                    if (result.schedule[i].id == teacherId) {
+                        data = result.schedule[i]._class;
+                        break;
+                    }
+                }
 
-            return res.status(200).send(
-                _class.members
-            )
-        });
+                if (!data) {
+                    return res.status(404).send({
+                        "message" : "record not found"
+                    })
+                }
+                return res.status(200).send(
+                    data
+                )
+            })
+        } else {
+            Teacher_schedule.findOne({$and: [
+                {"nid" : nid}
+            ]}, "schedule", (err, result) => {
+                if (err) {
+                    return res.status(500).send({
+                        "message" : "unexpected error"
+                    })
+                }
+                if (!result) {
+                    return res.status(404).send({
+                        "message" : "record not found"
+                    })
+                }
+
+                data = null;
+                for (let i = 0; i < result.schedule.length; i++) {
+                    console.log(i);
+                    if (result.schedule[i].id == teacherId) {
+                        data = result.schedule[i]._class;
+                        for (let j = 0; j < data.length; j++) {
+                            if (id == data[j]) {
+                                Class.findOne({"id" : id}, "id className headteacher members", (err, result) => {
+                                    if (err) {
+                                        return res.status(500).send({
+                                            "message" : "unexpected error"
+                                        })
+                                    }
+
+                                    if (!result) {
+                                        return res.status(404).send({
+                                            "message" : "Class id exists in teacher's schedule but not in database"
+                                        })
+                                    }
+
+                                    return res.status(200).send(
+                                        result
+                                    )
+                                })
+                                break;
+                            }
+                            if (j == data.length - 1) {
+                                return res.status(404).send({
+                                    "message" : `${teacherId} does not teach class ${id}`
+                                })
+                            }
+                        }
+                        break;
+                    }
+                }
+
+                if (!data) {
+                    return res.status(404).send({
+                        "message" : "record not found"
+                    })
+                }
+            })
+        }
     }
 })
 
