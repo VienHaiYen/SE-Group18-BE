@@ -329,10 +329,10 @@ router.post("/add-student-to-class", (req, res) => {
         var classId = req.body.classId;
         var nid = req.body.nid;
 
-        Info.findOneAndUpdate({$and:[
+        Info.findOne({$and:[
             {id : studentId},
             {role : "student"}
-        ]}, {"_class" : classId}, (err, info) => {
+        ]}, "_class" , (err, info) => {
             if (err) {
                 return res.status(500).send({
                     "message" : "Unexpected Error"
@@ -343,27 +343,62 @@ router.post("/add-student-to-class", (req, res) => {
                     "message" : "student not found"
                 })              
             }
-
-            Class.findOneAndUpdate({$and : [
-                {"id" : classId},
-                {"nid" : nid}
-            ]}, {
-                $push : {
-                    members : [studentId]
+            Class.findOneAndUpdate({ "id" : info._class}, {
+                $pullAll : {
+                    "members" : [studentId]
                 }
             }, (err, check) => {
                 if (err) {
+                    console.log(err)
                     return res.status(500).send({
-                        "message" : "Unexpected Error"
+                        "message" : "unexpected error"
                     })
                 }
+    
                 if (!check) {
                     return res.status(404).send({
-                        "message" : "class not found"
-                    })              
+                        "message" : "record not found"
+                    })
                 }
-                console.log(check);
+
+                Info.findOneAndUpdate({$and:[
+                    {id : studentId},
+                    {role : "student"}
+                ]}, {"_class" : classId}, (err, info) => {
+                    if (err) {
+                        return res.status(500).send({
+                            "message" : "Unexpected Error"
+                        })
+                    }
+                    if (!info) {
+                        return res.status(404).send({
+                            "message" : "student not found"
+                        })              
+                    }
+    
+                    Class.findOneAndUpdate({$and : [
+                        {"id" : classId},
+                        {"nid" : nid}
+                    ]}, {
+                        $push : {
+                            members : [studentId]
+                        }
+                    }, (err, check) => {
+                        if (err) {
+                            return res.status(500).send({
+                                "message" : "Unexpected Error"
+                            })
+                        }
+                        if (!check) {
+                            return res.status(404).send({
+                                "message" : "class not found"
+                            })              
+                        }
+                        console.log(check);
+                    })
+                })
             })
+            
         })
     }
 
