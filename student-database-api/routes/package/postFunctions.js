@@ -462,8 +462,8 @@ function updateGradeBySubject(subject, nid, id, result, res) {
             "mieng" :[],
             "_15" : [],
             "_45" :[],
-            "gk"  : 0,
-            "ck": 0,
+            "_gk"  : null,
+            "_ck": null,
         }
         var data = {
             "Toan": {subjectPoint},
