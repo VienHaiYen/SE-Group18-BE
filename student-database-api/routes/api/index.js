@@ -228,13 +228,12 @@ router.get("/class-list", (req, res) => {
     } else if (auth.ensureAdmin(req)) {// Admin
         var id = req.query.id;
         var nid = req.query.nid;
-        if (id == define) {
-            
+        if (id == undefined) {
 
             Class.find({ $and : [
                 {nid : nid}
             ]}, "headteacher members", (err, _class) => {
-
+                console.log("class list",res);
                 if (err) {
                     return res.status(500).send({
                         "message" : "Unexpected Error"
