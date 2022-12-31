@@ -45,8 +45,6 @@ router.get("/viewDev", function(req, res) {
     }
 })
 
-
-
 router.get("/grade", (req, res) => {
     userSession = auth.ensureAuthenticated(req);
     if(!userSession) {    
@@ -379,13 +377,39 @@ router.get("/class-list", (req, res) => {
 // POST
 
 router.post("/about", (req, res) => {
-    if(!auth.ensureAuthenticated(req)) {    
+    userSession = auth.ensureAuthenticated(req);
+    if(!userSession) {    
         return res.status(401).send({
             "message" : "You are not logged in"
         })
     }
     else {
-        // DEFINE FUNCTION HERE
+        var id = userSession.id;
+        var info = req.body;
+        Info.findOneAndUpdate({id : id}, {
+            "birthday" : info.birthday,
+            "address" : info.address,
+            "gender" : info.gender,
+            "mail" : info.mail,
+            "phone" : info.phone
+        }, (err, result) => {
+            if (err) {
+                return res.status(500).send({
+                    "message" : "unexpected error"
+                })
+            }
+
+            if (!result) {
+                return res.status(404).send({
+                    "message" : "record not found"
+                })
+            }
+
+            return res.status(200).send({
+                "message" : "profile updated successfully"
+            })
+
+        })
     }
 })
 

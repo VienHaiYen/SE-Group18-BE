@@ -10,6 +10,7 @@ const Info = require("../../models/info");
 const Rule = require("../../models/rule");
 const Schoolyear = require("../../models/schoolyear");
 const teacher_schedule = require("../../models/schedule_teacher");
+const { getYear } = require("../package/defineSyntax");
 const poster = require("../package/postFunctions").controller;
 const MSG = require("../package/defineMessage").msg;
 const session = require("../../session").session;
@@ -105,7 +106,6 @@ router.post("/input-student", function(req, res, next) {
         });
     }
     else {
-        console.log(req);
         var query = mongoose.model("account", Account.schema);
         query.countDocuments({}, (err, count) => {
             var role = "student";
@@ -166,12 +166,7 @@ router.post("/input-student", function(req, res, next) {
                 msg = poster.createProfile(id, role, name, birthday, address, gender, mail, phone, _class, subject, res);
             }
 
-            Class.updateOne({id : _class}, {
-                $push : {
-                    members : id
-                }
-            })
-
+            
         })
         
     }
@@ -287,25 +282,143 @@ router.post("/rule", function(req, res, next) {
     }
 })
 
-router.post("/class-list", function(req, res, next) {
-    if (!auth.ensureAdmin(req)) {
+// router.post("/class-list", function(req, res, next) {
+//     if (!auth.ensureAdmin(req)) {
+//         return res.status(401).send({
+//             "message" : "You are not an admin"
+//         });
+//     } else {
+//         // DEFINE FUNCTION HERE
+//     }
+// })
+
+// router.post("/teacher-schedule", function(req,res) {
+//     if (!auth.ensureAdmin(req)) {
+//         return res.status(401).send({
+//             "message" : "You are not an admin"
+//         })
+//     } else {
+//         // DEFINE FUNCTION HERE
+//     }
+// }) 
+
+router.post("/add-student-to-class", (req, res) => {
+    userSession = auth.ensureAdmin(req);
+    if(!userSession) {    
         return res.status(401).send({
             "message" : "You are not an admin"
-        });
+        })  
     } else {
-        // DEFINE FUNCTION HERE
+        var studentId = req.body.id;
+        var classId = req.body.classId;
+        var nid = req.body.nid;
+
+        Info.findOneAndUpdate({$and:[
+            {id : studentId},
+            {role : "student"}
+        ]}, {"_class" : classId}, (err, info) => {
+            if (err) {
+                return res.status(500).send({
+                    "message" : "Unexpected Error"
+                })
+            }
+            if (!info) {
+                return res.status(404).send({
+                    "message" : "student not found"
+                })              
+            }
+
+            Class.findOneAndUpdate({$and : [
+                {"id" : classId},
+                {"nid" : nid}
+            ]}, {
+                $push : {
+                    members : [studentId]
+                }
+            }, (err, check) => {
+                if (err) {
+                    return res.status(500).send({
+                        "message" : "Unexpected Error"
+                    })
+                }
+                if (!check) {
+                    return res.status(404).send({
+                        "message" : "class not found"
+                    })              
+                }
+                console.log(check);
+            })
+        })
     }
+
+    
 })
 
-router.post("/teacher-schedule", function(req,res) {
-    if (!auth.ensureAdmin(req)) {
+router.post("/about/:id", (req, res) => {
+    userSession = auth.ensureAdmin(req);
+    if(!userSession) {    
         return res.status(401).send({
-            "message" : "You are not an admin"
+            "message" : "You are not ad admin"
         })
-    } else {
-        // DEFINE FUNCTION HERE
     }
-}) 
+    else {
+        var {id} = req.params;
+        var info = req.body;
+        Info.findOneAndUpdate({id : id}, {
+            "name" : info.name,
+            "birthday" : info.birthday,
+            "gender" : info.gender,
+            "mail" : info.mail,
+            "phone" : info.phone,
+            "_class" : info._class,
+            "subject" : info.subject    
+        }, (err, result) => {
+            if (err) {
+                return res.status(500).send({
+                    "message" : "unexpected error"
+                })
+            }
+
+            if (!result) {
+                return res.status(404).send({
+                    "message" : "record not found"
+                })
+            }
+            
+            if (info._class != null) {
+                Class.findOneAndUpdate({$and : [
+                    {"id" : info._class},
+                    {
+                        $or : [
+                            {"nid" : getYear() + '1'},
+                            {"nid" : getYear() + '2'}
+                        ]
+                    }
+                ]}, {
+                    $push : {
+                        members : [id]
+                    }
+                }, (err, check) => {
+                    if (err) {
+                        return res.status(500).send({
+                            "message" : "Unexpected Error"
+                        })
+                    }
+                    if (!check) {
+                        return res.status(404).send({
+                            "message" : "class not found"
+                        })              
+                    }
+                    console.log(check);
+                })
+            }
+
+            return res.status(200).send({
+                "message" : "profile updated successfully"
+            })
+        })
+    }
+})
 
 // DELETE
 
