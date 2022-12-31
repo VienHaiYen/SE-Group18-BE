@@ -168,7 +168,7 @@ router.post("/input-student", function(req, res, next) {
 
             Class.findOneAndUpdate({$and : [
                 {"id" : _class},
-                {"nid" : nid}
+                {"nid" : getYear() + '1'}
             ]}, {
                 $push : {
                     members : [id]
@@ -459,14 +459,28 @@ router.delete("/delete/:id", function(req, res) {
             }
 
             var _class = result._class;
-            Class.updateOne({ id : _class}, {
+            console.log("removed from " + _class);
+            Class.findOneAndUpdate({ "id" : _class}, {
                 $pullAll : {
-                    members:[id]
+                    "members" : [id]
                 }
-            })
-
-            return res.status(200).send({
-                "message" : `${id} successfully deleted`
+            }, (err, check) => {
+                if (err) {
+                    console.log(err)
+                    return res.status(500).send({
+                        "message" : "unexpected error"
+                    })
+                }
+    
+                if (!check) {
+                    return res.status(404).send({
+                        "message" : "record not found"
+                    })
+                }
+                console.log("removed from " + check.members);
+                return res.status(200).send({
+                    "message" : `${id} successfully deleted`
+                })
             })
         })
     }
