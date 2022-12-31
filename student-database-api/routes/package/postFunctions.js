@@ -267,7 +267,7 @@ function createGrade(nid, id, result) {
     grade.findOne({ $and: [
         {nid : nid},
         {"point.id" : id}
-    ]}, (err, check) => {
+    ]}, async (err, check) => {
         if (err) {
             return MSG.ERROR_MESSAGE;
         }
@@ -284,7 +284,7 @@ function createGrade(nid, id, result) {
             }
         })
 
-        newGrade.save();
+        await newGrade.save();
         return MSG.SUCCESS_MESSAGE;
     })
 }
@@ -467,7 +467,7 @@ function updateGradeBySubject(subject, nid, id, result, res) {
 
 
         if (check == null) {
-            var msg = await createGrade(nid, id, data);
+            await createGrade(nid, id, data);
         }
         
         if (subject == "Toan") {
