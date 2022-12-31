@@ -166,6 +166,22 @@ router.post("/input-student", function(req, res, next) {
                 msg = poster.createProfile(id, role, name, birthday, address, gender, mail, phone, _class, subject, res);
             }
 
+            Class.findOneAndUpdate({$and : [
+                {"id" : _class},
+                {"nid" : nid}
+            ]}, {
+                $push : {
+                    members : [id]
+                }
+            }, (err, check) => {
+                if (err) {
+                    console.log(err);    
+                }
+                if (!check) {
+                    console.log("class not found");             
+                }
+                console.log(check);
+            })
             
         })
         
