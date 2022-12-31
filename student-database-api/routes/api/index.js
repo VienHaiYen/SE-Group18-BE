@@ -231,18 +231,10 @@ router.get("/class-list", (req, res) => {
         var id = req.query.id;
         var nid = req.query.nid;
         if (id == undefined) {
-<<<<<<< HEAD
-
-            Class.find({ $and : [
-                {nid : nid}
-            ]}, "headteacher members", (err, _class) => {
-                console.log("class list",res);
-=======
             Class.find({ $and : [
                 {nid : nid}
             ]}, "id className headteacher members", (err, _class) => {
 
->>>>>>> 3c51211143bf453f11b09958ab591541ac55df6c
                 if (err) {
                     return res.status(500).send({
                         "message" : "Unexpected Error"
