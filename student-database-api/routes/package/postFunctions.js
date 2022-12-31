@@ -312,17 +312,21 @@ function updateGrade(nid, id, result) {
 
 // NEED FIXING (DONE)
 // Create Rule Function
-function createRule(nid, numStudent,numStudent_max,numClass10,numClass11,numClass12,ageMax,ageMin) {
+function createRule(nid, numStudent,numStudent_max,numClass10,numClass11,numClass12,ageMax,ageMin, res) {
     const rule = mongoose.model("rule", Rule.schema);
     
     rule.findOne({nid : nid}, (err, check) => {
         
         if (err) {
-            return MSG.ERROR_MESSAGE;
+            return res.status(500).send({
+                "message" : "unexpected error"
+            });
         }
 
         if (check != null) {
-            return MSG.DUPPLICATE_MESSAGE;
+            return res.status(404).send({
+                "message" : "Dupplicate unique infomation"
+            });
         }
 
         var newRule=new rule({
@@ -344,25 +348,28 @@ function createRule(nid, numStudent,numStudent_max,numClass10,numClass11,numClas
             }
         });
         newRule.save();
-        return MSG.SUCCESS_MESSAGE;
+        return res.status(200).send({
+            "message" : "successfully created rule"
+        });;
     })
 
 }
 
 // Update Rule Function
-function updateRule(nid, numStudent_min,numStudent_max,numClass10,numClass11,numClass12,age_min,age_max) {
+function updateRule(nid, numStudent_min,numStudent_max,numClass10,numClass11,numClass12,age_min,age_max, res) {
     const rule = mongoose.model("rule", Rule.schema);
     rule.findOne({nid : nid}, (err, check) => {
         
-        if (err) {
-            return MSG.ERROR_MESSAGE;
-        }
 
-        if (check == MSG.ERROR_MESSAGE) {
-            return MSG.ERROR_MESSAGE;
-        }
-    
-        if (check != null) {
+        if (err) {
+            return res.status(500).send({
+                "message" : "Unexpected Error",
+            });
+        } 
+
+        if (!check) {
+            createRule(nid, numStudent_min,numStudent_max,numClass10,numClass11,numClass12,age_min,age_max,res)
+        } else {
             rule.updateOne({
                 nid : nid
             },{$set: {
@@ -382,9 +389,9 @@ function updateRule(nid, numStudent_min,numStudent_max,numClass10,numClass11,num
                     max:age_max
                 }
             }})
-            return MSG.SUCCESS_MESSAGE;
-        } else {
-            return MSG.EMPTY_MESSAGE;
+            return res.status(200).send({
+                "message" : "create rule successfully"
+            })
         }
     })
 }
