@@ -28,6 +28,7 @@ router.get("/rule", function(req, res) {
         });
     } else {
         var nid = req.query.nid;
+        var nid = req.query.nid;
 
         Rule.findOne({nid : nid}, (err, rule) => {
             if (err) {
@@ -62,7 +63,6 @@ router.get("/teacher-list", function(req, res) {
                     "message" : "Unexpected Error"
                 })
             }
-
             return res.status(200).send(
                 data
             )
@@ -104,10 +104,10 @@ router.post("/input-student", function(req, res, next) {
             "message" : "You are not an admin"
         });
     }
-    else {    
+    else {
+        console.log(req);
         var query = mongoose.model("account", Account.schema);
         query.countDocuments({role : "student"}, (err, count) => {
-
             var role = "student";
             var id = thisYear() + genZero(count + 1, role) + String(count + 1);
             var name = req.body.name;
