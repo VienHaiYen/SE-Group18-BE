@@ -30,7 +30,7 @@ router.use(require("./student"));
 router.get("/viewDev", function(req, res) {
     userSession = auth.ensureAuthenticated(req);
     if(userSession) {    
-        res.status(200).send({
+        return res.status(200).send({
             "Vien Hai Hien" : "20120633",
             "Trinh Le Nguyen Vu": "20120630",
             "Tran Thi Phuong Linh":"20120521",
@@ -50,7 +50,7 @@ router.get("/viewDev", function(req, res) {
 router.get("/grade", (req, res) => {
     userSession = auth.ensureAuthenticated(req);
     if(!userSession) {    
-        res.status(401).send({
+        return res.status(401).send({
             "message" : "You are not logged in"
         })
     }
@@ -144,7 +144,7 @@ router.get("/grade", (req, res) => {
 router.get("/about", (req, res) => {
     userSession = auth.ensureAuthenticated(req);
     if(!userSession) {    
-        res.status(401).send({
+        return res.status(401).send({
             "message" : "You are not logged in"
         })
     }
@@ -173,7 +173,7 @@ router.get("/about", (req, res) => {
 
 router.get("/teacher-schedule", function(req,res) {
     if (!auth.ensureTeacher(req) && !auth.ensureAdmin(req)) {
-        res.status(401).send({
+        return res.status(401).send({
             "message" : "You are not a teacher or an admin"
         })
     } else {
@@ -229,11 +229,18 @@ router.get("/class-list", (req, res) => {
         var id = req.query.id;
         var nid = req.query.nid;
         if (id == undefined) {
+<<<<<<< HEAD
 
             Class.find({ $and : [
                 {nid : nid}
             ]}, "headteacher members", (err, _class) => {
                 console.log("class list",res);
+=======
+            Class.find({ $and : [
+                {nid : nid}
+            ]}, "id className headteacher members", (err, _class) => {
+
+>>>>>>> 3c51211143bf453f11b09958ab591541ac55df6c
                 if (err) {
                     return res.status(500).send({
                         "message" : "Unexpected Error"
@@ -258,7 +265,7 @@ router.get("/class-list", (req, res) => {
             _class.findOne({ $and : [
                 {nid : nid},
                 {id : id}
-            ]}, "className headteacher", (err, _class) => {
+            ]}, "id className headteacher members", (err, _class) => {
                 if (err) {
                     return res.status(500).send({
                         "message" : "Unexpected Error"
@@ -277,8 +284,8 @@ router.get("/class-list", (req, res) => {
             });
         }
     } else { // Teacher
-        var id = req.body.id;
-        var nid = req.body.nid;
+        var id = req.query.id;
+        var nid = req.query.nid;
 
         const _class = mongoose.model("_class", Class.schema);
         _class.findOne({ $and : [
@@ -308,7 +315,7 @@ router.get("/class-list", (req, res) => {
 
 router.post("/about", (req, res) => {
     if(!auth.ensureAuthenticated(req)) {    
-        res.status(401).send({
+        return res.status(401).send({
             "message" : "You are not logged in"
         })
     }

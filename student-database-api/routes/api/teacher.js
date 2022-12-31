@@ -25,7 +25,7 @@ router.use(express.json());
 // POST
 router.post("/input-grade", function(req,res, next) {
     if (!auth.ensureTeacher(req)) {
-        res.status(401).send({
+        return res.status(401).send({
             "message" : "You are not a teacher"
         });
     } else {

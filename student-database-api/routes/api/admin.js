@@ -23,10 +23,11 @@ router.use(express.json());
 // GET
 router.get("/rule", function(req, res) {
     if (!auth.ensureAdmin(req)) {
-        res.status(401).send({
+        return res.status(401).send({
             "message" : "You are not an admin"
         });
     } else {
+        var nid = req.query.nid;
         var nid = req.query.nid;
 
         Rule.findOne({nid : nid}, (err, rule) => {
@@ -51,12 +52,10 @@ router.get("/rule", function(req, res) {
 
 router.get("/teacher-list", function(req, res) {
     if (!auth.ensureAdmin(req)) {
-        res.status(401).send({
+        return res.status(401).send({
             "message" : "You are not an admin"
         });
     } else {
-        var result;
-
         const info = mongoose.model("info", Info.schema);
         info.find({role : "teacher"}, (err, data) => {
             if (err) {
@@ -64,11 +63,9 @@ router.get("/teacher-list", function(req, res) {
                     "message" : "Unexpected Error"
                 })
             }
-            return (result = data);
-        })
-
-        res.status(200).send({
-            result
+            return res.status(200).send(
+                data
+            )
         })
     }
 })
@@ -166,31 +163,7 @@ router.post("/input-student", function(req, res, next) {
             }
 
             if (msg == MSG.SUCCESS_MESSAGE) {
-                msg = poster.createProfile(id, role, name, birthday, address, gender, mail, phone, _class, subject);
-                if (msg == MSG.SUCCESS_MESSAGE) {
-
-                    msg = poster.createGrade(thisYear(), id, null);
-                    if (msg == MSG.ERROR_MESSAGE) {
-                        return res.status(500).send({
-                            "message" : "unexpected error"
-                        })
-                    }
-
-                    if (msg == MSG.SUCCESS_MESSAGE) {
-                        return res.status(200).send({
-                            "message" : "Successful",
-                            "id" : id
-                        });
-                    }
-                } else if (msg == MSG.ERROR_MESSAGE) {
-                    return res.status(500).send({
-                        "message" : "Unexpected Error"
-                    })
-                } else {
-                    return res.status(418).send({
-                        "message" : "Dupplicate unique infomation"
-                    });
-                }
+                msg = poster.createProfile(id, role, name, birthday, address, gender, mail, phone, _class, subject, res);
             }
 
         })
@@ -262,28 +235,14 @@ router.post("/input-teacher", function(req, res, next) {
                 })
             }
 
-            msg = poster.createProfile(id, role, name, birthday, address, gender, mail, phone, _class, subject);
-            if (msg == MSG.SUCCESS_MESSAGE) {
-                return res.status(200).send({
-                    "message" : "Successful",
-                    "id" : id
-                });
-            } else if (msg == MSG.ERROR_MESSAGE) {
-                return res.status(500).send({
-                    "message" : "Unexpected Error"
-                })
-            } else {
-                return res.status(418).send({
-                    "message" : "Dupplicate unique infomation"
-                });
-            }
+            msg = poster.createProfile(id, role, name, birthday, address, gender, mail, phone, _class, subject, res);
         })
     }
 })
 
 router.post("/rule", function(req, res, next) {
     if (!auth.ensureAdmin(req)) {
-        res.status(401).send({
+        return res.status(401).send({
             "message" : "You are not an admin"
         });
     } else {
@@ -324,7 +283,7 @@ router.post("/rule", function(req, res, next) {
 
 router.post("/class-list", function(req, res, next) {
     if (!auth.ensureAdmin(req)) {
-        res.status(401).send({
+        return res.status(401).send({
             "message" : "You are not an admin"
         });
     } else {
@@ -334,13 +293,42 @@ router.post("/class-list", function(req, res, next) {
 
 router.post("/teacher-schedule", function(req,res) {
     if (!auth.ensureAdmin(req)) {
-        res.status(401).send({
+        return res.status(401).send({
             "message" : "You are not an admin"
         })
     } else {
         // DEFINE FUNCTION HERE
     }
 }) 
+
+// DELETE
+
+router.delete("/delete/:id", function(req, res) {
+    if (!auth.ensureAdmin(req)) {
+        return res.status(401).send({
+            "message" : "You are not an admin"
+        })
+    } else {
+        var {id} = req.params;
+        Info.findOneAndDelete({id : id}, (err, result) => {
+            if (err) {
+                return res.status(500).send({
+                    "message" : "unexpected error"
+                })
+            }
+
+            if (!result) {
+                return res.status(404).send({
+                    "message" : "record not found"
+                })
+            }
+
+            return res.status(200).send({
+                "message" : `${id} successfully deleted`
+            })
+        })
+    }
+})
 
 
 
