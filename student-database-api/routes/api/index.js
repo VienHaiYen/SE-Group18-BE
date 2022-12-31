@@ -308,7 +308,7 @@ router.get("/class-list", (req, res) => {
 
                 if (!data) {
                     return res.status(404).send({
-                        "message" : "record not found"
+                        "message" : `${teacherId} does not teach any class`
                     })
                 }
                 return res.status(200).send(
