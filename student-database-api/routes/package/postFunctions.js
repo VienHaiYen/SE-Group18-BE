@@ -45,7 +45,7 @@ function updateAccount(ID, PASSWORD, ROLE) {
         if (!check) {
             return MSG.EMPTY_MESSAGE;
         }
-        acc.updateOne({"id" : ID}, {$set : {
+        acc.findOneAndUpdate({"id" : ID}, {$set : {
             "password" : PASSWORD,
             "role" : ROLE
         }});
@@ -128,7 +128,7 @@ function updateProfile(id, role, name, birthday, address, gender, mail, phone, _
             return MSG.ERROR_MESSAGE;
         }
         if (check != null) {
-            info.updateOne({"id" : id}, {$set : {
+            info.findOneAndUpdate({"id" : id}, {
                 "role" : role,
                 "name" : name,
                 "birthday" : birthday,
@@ -138,7 +138,7 @@ function updateProfile(id, role, name, birthday, address, gender, mail, phone, _
                 "phone" : phone,
                 "_class" : _class,
                 "subject" : subject
-            }});
+            });
             return MSG.SUCCESS_MESSAGE;
         } else {
             return MSG.EMPTY_MESSAGE;
@@ -244,7 +244,7 @@ function updateClass(nid, id, className, member) {
             return MSG.ERROR_MESSAGE;
         }
         if (check != null) {
-            _class.updateOne({
+            _class.findOneAndUpdate({
                 //"nid" : nid,
                 "classlist.id" : id 
             }, {
@@ -301,7 +301,7 @@ function updateGrade(nid, id, result) {
             return MSG.ERROR_MESSAGE;
         }
         if (check != null) {
-            grade.updateOne({"nid" : nid, "id" : id}, {"result" : result});
+            grade.findOneAndUpdate({"nid" : nid, "id" : id}, {"result" : result});
             return MSG.SUCCESS_MESSAGE;
         } else {
             return MSG.DUPPLICATE_MESSAGE;
@@ -312,7 +312,7 @@ function updateGrade(nid, id, result) {
 
 // NEED FIXING (DONE)
 // Create Rule Function
-function createRule(nid, numStudent,numStudent_max,numClass10,numClass11,numClass12,ageMax,ageMin, res) {
+function createRule(nid, numStudent,numStudent_max,numClass10,numClass11,numClass12,ageMin,ageMax, res) {
     const rule = mongoose.model("rule", Rule.schema);
     
     rule.findOne({nid : nid}, (err, check) => {
@@ -359,8 +359,6 @@ function createRule(nid, numStudent,numStudent_max,numClass10,numClass11,numClas
 function updateRule(nid, numStudent_min,numStudent_max,numClass10,numClass11,numClass12,age_min,age_max, res) {
     const rule = mongoose.model("rule", Rule.schema);
     rule.findOne({nid : nid}, (err, check) => {
-        
-
         if (err) {
             return res.status(500).send({
                 "message" : "Unexpected Error",
@@ -370,28 +368,35 @@ function updateRule(nid, numStudent_min,numStudent_max,numClass10,numClass11,num
         if (!check) {
             createRule(nid, numStudent_min,numStudent_max,numClass10,numClass11,numClass12,age_min,age_max,res)
         } else {
-            rule.updateOne({
-                nid : nid
-            },{$set: {
-                numberOfStudent: {
-                    min:numStudent_min,
-                    max:numStudent_max
-                },
-                numberOfClass:{
-        
-                    _10:numClass10,
-                    _11:numClass11,
-                    _12:numClass12
-        
-                },
-                age:{
-                    min:age_min,
-                    max:age_max
+
+
+            rule.findOneAndUpdate({nid : nid},{
+                "numberOfStudent.min" : numStudent_min,
+                "numberOfStudent.max" : numStudent_max,
+                "numberOfClass._10" : numClass10,
+                "numberOfClass._11" : numClass11,
+                "numberOfClass._12" : numClass12,
+                "age.min" : age_min,
+                "age.max" : age_max                
+            }, (err, rule) => {
+                if (err) {
+                    return res.status(500).send({
+                        "message" : "unexpected error"
+                    })
                 }
-            }})
-            return res.status(200).send({
-                "message" : "create rule successfully"
+
+                if (!rule) {
+                    return res.status(404).send({
+                        "message" : "but how? if (!rule) then we shouldn't even get here"
+                    })
+                }
+
+                return res.status(200).send({
+                    "message" : "create rule successfully"
+                })
             })
+            
+            
         }
     })
 }
@@ -429,7 +434,7 @@ function updateSchoolYear(YEAR, semester, nid) {
         }
    
         if (check != null) {
-            year.updateOne({nid : nid}, {$set: {
+            year.findOneAndUpdate({nid : nid}, {$set: {
                 "year" : YEAR,
                 "semester" : semester
             }})

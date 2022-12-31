@@ -265,36 +265,29 @@ router.post("/rule", function(req, res, next) {
     } else {
         var nid = req.body.nid;
         var numberOfClass = {
-            _10 : req.body.numberOfClass10,
-            _11 : req.body.numberOfClass11,
-            _12 : req.body.numberOfClass12
+            _10 : req.body.numberOfClass._10,
+            _11 : req.body.numberOfClass._11,
+            _12 : req.body.numberOfClass._12
         }
         var numberOfStudent = {
-            min : req.body.numberOfStudent_min,
-            max : req.body.numberOfStudent_max,
+            min : req.body.numberOfStudent.min,
+            max : req.body.numberOfStudent.max,
         }
         var age = {
-            min : req.body.age_min,
-            max : req.body.age_max,
+            min : req.body.age.min,
+            max : req.body.age.max,
         }
+        var rule = {
+            nid,
+            numberOfClass,
+            numberOfStudent,
+            age
+        }
+        console.log(rule)
 
         var msg = poster.updateRule(nid, numberOfStudent.min, numberOfStudent.max, 
             numberOfClass._10, numberOfClass._11, numberOfClass._12, 
-            age.min, age.max)
-
-            if (msg == MSG.SUCCESS_MESSAGE) {
-                return res.status(200).send({
-                    "message" : "Successful",
-                });
-            } else if (msg == MSG.ERROR_MESSAGE) {
-                return res.status(500).send({
-                    "message" : "Unexpected Error"
-                })
-            } else {
-                return res.status(418).send({
-                    "message" : "Dupplicate unique infomation"
-                });
-            }
+            age.min, age.max, res)
     }
 })
 
