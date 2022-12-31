@@ -266,7 +266,7 @@ function createGrade(nid, id, result) {
     const grade = mongoose.model("grade", Grade.schema);
     grade.findOne({ $and: [
         {nid : nid},
-        {id : id}
+        {"point.id" : id}
     ]}, (err, check) => {
         if (err) {
             return MSG.ERROR_MESSAGE;
@@ -274,10 +274,14 @@ function createGrade(nid, id, result) {
         if (check != null) {
             return MSG.DUPPLICATE_MESSAGE;
         }
-    
+        
+        console.log(result);
         var newGrade = new grade({
-            id : id,
-            result : result
+            "nid"   : nid,
+            "point" : {
+                "id" : id,
+                "result" : result
+            }
         })
 
         newGrade.save();
@@ -429,28 +433,253 @@ function updateSchoolYear(YEAR, semester, nid) {
     })
 }
 
-function updateGradeBySubject(subject, nid, id, result) {
-    const grade = mongoose.model("Schoolyear", SchoolYear.schema);
+function updateGradeBySubject(subject, nid, id, result, res) {
+    const grade = mongoose.model("grade", Grade.schema);
 
     grade.findOne({ $and: [
         {nid : nid},
-        {id : id}
-    ]}, (err, check) => {
+        {"point.id" : id}
+    ]}, async (err, check) => {
         if (err) {
-            return MSG.ERROR_MESSAGE;
+            return res.status(500).send({
+                "message" : "unexpected error"
+            });
         }
-        if (check != null) {
-            var update = {}
-            update[subject] = {result}
+
+        var subjectPoint = {
+            "mieng" :[],
+            "_15" : [],
+            "_45" :[],
+            "gk"  : 0,
+            "ck": 0,
+        }
+        var data = {
+            "Toan": {subjectPoint},
+            "Van" : {subjectPoint},
+            "Li" : {subjectPoint},
+            "Hoa" : {subjectPoint},
+            "Sinh" : {subjectPoint},
+            "Su" : {subjectPoint},
+            "Dia" : {subjectPoint},
+            "DaoDuc" : {subjectPoint},
+            "TD" : "KD"
+        }
+
+
+        if (check == null) {
+            var msg = await createGrade(nid, id, data);
+        }
         
-            if (check != null) {
-                year.updateOne({"nid" : nid, "id" : id}, {$set: update})
-                return MSG.SUCCESS_MESSAGE;
-            } else {
-                return MSG.EMPTY_MESSAGE;
+        if (subject == "Toan") {
+            grade.findOneAndUpdate({$and: [
+                {nid : nid},
+                {"point.id" : id}
+            ]}, {
+                "point.result.Toan" : result
+            }, (err, check) => {
+                if (err) {
+                    return res.status(500).send({
+                        "message" : "unexpected error"
+                    })
+                }
+
+                if (!check) {
+                    return res.status(404).send({
+                        "message" : "grade not created, please try again"
+                    })
+                }
+                return res.status(200).send({
+                    "message" : "successfully updated scores"
+                });
+            })
+        } else
+        if (subject == "Li") {
+            grade.findOneAndUpdate({$and: [
+                {nid : nid},
+                {"point.id" : id}
+            ]}, {
+                "point.result.Li" : result
+            }, (err, check) => {
+                if (err) {
+                    return res.status(500).send({
+                        "message" : "unexpected error"
+                    })
+                }
+
+                if (!check) {
+                    return res.status(404).send({
+                        "message" : "grade not created, please try again"
+                    })
+                }
+                return res.status(200).send({
+                    "message" : "successfully updated scores"
+                });
+            })
+        } else
+        if (subject == "Hoa") {
+            grade.findOneAndUpdate({$and: [
+                {nid : nid},
+                {"point.id" : id}
+            ]}, {
+                "point.result.Hoa" : result
+            }, (err, check) => {
+                if (err) {
+                    return res.status(500).send({
+                        "message" : "unexpected error"
+                    })
+                }
+
+                if (!check) {
+                    return res.status(404).send({
+                        "message" : "grade not created, please try again"
+                    })
+                }
+                return res.status(200).send({
+                    "message" : "successfully updated scores"
+                });
+            })
+        } else
+        if (subject == "Sinh") {
+            grade.findOneAndUpdate({$and: [
+                {nid : nid},
+                {"point.id" : id}
+            ]}, {
+                "point.result.Sinh" : result
+            }, (err, check) => {
+                if (err) {
+                    return res.status(500).send({
+                        "message" : "unexpected error"
+                    })
+                }
+
+                if (!check) {
+                    return res.status(404).send({
+                        "message" : "grade not created, please try again"
+                    })
+                }
+                return res.status(200).send({
+                    "message" : "successfully updated scores"
+                });
+            })
+        } else
+        if (subject == "Van") {
+            grade.findOneAndUpdate({$and: [
+                {nid : nid},
+                {"point.id" : id}
+            ]}, {
+                "point.result.Van" : result
+            }, (err, check) => {
+                if (err) {
+                    return res.status(500).send({
+                        "message" : "unexpected error"
+                    })
+                }
+
+                if (!check) {
+                    return res.status(404).send({
+                        "message" : "grade not created, please try again"
+                    })
+                }
+                return res.status(200).send({
+                    "message" : "successfully updated scores"
+                });
+            })
+        } else
+        if (subject == "Su") {
+            grade.findOneAndUpdate({$and: [
+                {nid : nid},
+                {"point.id" : id}
+            ]}, {
+                "point.result.Su" : result
+            }, (err, check) => {
+                if (err) {
+                    return res.status(500).send({
+                        "message" : "unexpected error"
+                    })
+                }
+
+                if (!check) {
+                    return res.status(404).send({
+                        "message" : "grade not created, please try again"
+                    })
+                }
+                return res.status(200).send({
+                    "message" : "successfully updated scores"
+                });
+            })
+        } else
+        if (subject == "Dia") {
+            grade.findOneAndUpdate({$and: [
+                {nid : nid},
+                {"point.id" : id}
+            ]}, {
+                "point.result.Dia" : result
+            }, (err, check) => {
+                if (err) {
+                    return res.status(500).send({
+                        "message" : "unexpected error"
+                    })
+                }
+
+                if (!check) {
+                    return res.status(404).send({
+                        "message" : "grade not created, please try again"
+                    })
+                }
+                return res.status(200).send({
+                    "message" : "successfully updated scores"
+                });
+            })
+        } else
+        if (subject == "DaoDuc") {
+            grade.findOneAndUpdate({$and: [
+                {nid : nid},
+                {"point.id" : id}
+            ]}, {
+                "point.result.DaoDuc" : result
+            }, (err, check) => {
+                if (err) {
+                    return res.status(500).send({
+                        "message" : "unexpected error"
+                    })
+                }
+
+                if (!check) {
+                    return res.status(404).send({
+                        "message" : "grade not created, please try again"
+                    })
+                }
+                return res.status(200).send({
+                    "message" : "successfully updated scores"
+                });
+            })
+        } else
+        if (subject == "TD") {
+            grade.findOneAndUpdate({$and: [
+                {nid : nid},
+                {"point.id" : id}
+            ]}, {
+                "point.result.TD" : result
+            }), (err, check) => {
+                if (err) {
+                    return res.status(500).send({
+                        "message" : "unexpected error"
+                    })
+                }
+
+                if (!check) {
+                    return res.status(404).send({
+                        "message" : "grade not created, please try again"
+                    })
+                }
+                return res.status(200).send({
+                    "message" : "successfully updated scores"
+                });
             }
         } else {
-            return MSG.EMPTY_MESSAGE;
+            return res.status(404).send({
+                "message" : "subject not found"
+            });
         }
     })
 }

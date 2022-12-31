@@ -107,7 +107,7 @@ router.post("/input-student", function(req, res, next) {
     else {
         console.log(req);
         var query = mongoose.model("account", Account.schema);
-        query.countDocuments({role : "student"}, (err, count) => {
+        query.countDocuments({}, (err, count) => {
             var role = "student";
             var id = thisYear() + genZero(count + 1, role) + String(count + 1);
             var name = req.body.name;
@@ -165,6 +165,12 @@ router.post("/input-student", function(req, res, next) {
             if (msg == MSG.SUCCESS_MESSAGE) {
                 msg = poster.createProfile(id, role, name, birthday, address, gender, mail, phone, _class, subject, res);
             }
+
+            Class.updateOne({id : _class}, {
+                $push : {
+                    members : id
+                }
+            })
 
         })
         
@@ -322,6 +328,13 @@ router.delete("/delete/:id", function(req, res) {
                     "message" : "record not found"
                 })
             }
+
+            var _class = result._class;
+            Class.updateOne({ id : _class}, {
+                $pullAll : {
+                    members:[id]
+                }
+            })
 
             return res.status(200).send({
                 "message" : `${id} successfully deleted`
