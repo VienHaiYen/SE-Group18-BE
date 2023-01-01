@@ -165,22 +165,22 @@ router.post("/input-student", function(req, res, next) {
             if (msg == MSG.SUCCESS_MESSAGE) {
                 poster.createProfile(id, role, name, birthday, address, gender, mail, phone, _class, subject, res);
                 var subjectPoint = {
-                    "mieng" :[],
-                    "_15" : [],
-                    "_45" :[],
+                    "mieng" :null,
+                    "_15" : null,
+                    "_45" :null,
                     "_gk"  : null,
                     "_ck": null
                 }
                 var data = {
-                    "Toan": {subjectPoint},
-                    "Van" : {subjectPoint},
-                    "Li" : {subjectPoint},
-                    "Hoa" : {subjectPoint},
-                    "Sinh" : {subjectPoint},
-                    "Su" : {subjectPoint},
-                    "Dia" : {subjectPoint},
-                    "DaoDuc" : {subjectPoint},
-                    "TD" : "KD"
+                    "Toan": subjectPoint,
+                    "Van" : subjectPoint,
+                    "Anh" : subjectPoint,
+                    "Li" : subjectPoint,
+                    "Hoa" : subjectPoint,
+                    "Sinh" : subjectPoint,
+                    "Su" : subjectPoint,
+                    "Dia" : subjectPoint,
+                    "GDCD" : subjectPoint,
                 }
                 poster.createGrade(getYear() + '1', id, data)
             }

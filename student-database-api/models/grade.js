@@ -107,13 +107,13 @@ var gradeSchema = new mongoose.Schema({
                 _gk:{type:Number},
                 _ck:{type:Number}
             },
-            // Anh:{
-                // mieng:{type:Number},
-                // _15:{type:Number},
-                // _45:{type:Number},
-                // _gk:{type:Number},
-                // _ck:{type:Number}
-            // },
+            Anh:{
+                 mieng:{type:Number},
+                 _15:{type:Number},
+                 _45:{type:Number},
+                 _gk:{type:Number},
+                 _ck:{type:Number}
+             },
             Li:{
                 mieng:{type:Number},
                 _15:{type:Number},
@@ -149,7 +149,7 @@ var gradeSchema = new mongoose.Schema({
                 _gk:{type:Number},
                 _ck:{type:Number}
             },
-            DaoDuc:{
+            GDCD:{
                 mieng:{type:Number},
                 _15:{type:Number},
                 _45:{type:Number},

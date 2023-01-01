@@ -60,11 +60,13 @@ function createProfile(id, role, name, birthday, address, gender, mail, phone, _
 
     info.findOne({"id":id}, function(err, result) {
         if (err) {
+            
             return res.status(500).send({
                 "message" : MSG.ERROR_MESSAGE
             })
         }
         if (result) {
+            console.log(id, result.id)
             // req.flash("error", "ID's already existed");
             return res.status(418).send({
                 "message" : MSG.DUPPLICATE_MESSAGE
@@ -78,24 +80,12 @@ function createProfile(id, role, name, birthday, address, gender, mail, phone, _
                 })
             }
             if (result) {
+                console.log(mail, result.mail)
                 // req.flash("error", "There's already an account with this email");
                 return res.status(418).send({
                     "message" : MSG.DUPPLICATE_MESSAGE
                 })
-            }
-
-            info.findOne({"phone":phone}, function(err, result) {
-                if (err) {
-                    return res.status(500).send({
-                        "message" : MSG.ERROR_MESSAGE
-                    })
-                }
-                if (result) {
-                    // req.flash("error", "There's already an account with this phone number");
-                    return res.status(418).send({
-                        "message" : MSG.DUPPLICATE_MESSAGE
-                    })
-                }           
+            }         
                 const profile = mongoose.model("info", Info.schema);
                 var newProfile = new profile({
                     id:id,
@@ -112,8 +102,7 @@ function createProfile(id, role, name, birthday, address, gender, mail, phone, _
                 newProfile.save();
                 return res.status(200).send({
                     "message" : `${id}'s profile created successfully`
-                })
-            });    
+                })  
         });
     })
 
@@ -469,12 +458,13 @@ function updateGradeBySubject(subject, nid, id, result, res) {
         var data = {
             "Toan": subjectPoint,
             "Van" : subjectPoint,
+            "Anh" : subjectPoint,
             "Li" : subjectPoint,
             "Hoa" : subjectPoint,
             "Sinh" : subjectPoint,
             "Su" : subjectPoint,
             "Dia" : subjectPoint,
-            "DaoDuc" : subjectPoint,
+            "GDCD" : subjectPoint,
         }
 
 
@@ -497,7 +487,29 @@ function updateGradeBySubject(subject, nid, id, result, res) {
         
                 await newGrade.save();
             } 
-
+            if (subject == "Anh") {
+                grade.findOneAndUpdate({$and: [
+                    {nid : nid},
+                    {"point.id" : id}
+                ]}, {
+                    "point.result.Anh" : result
+                }, async (err, check) => {
+                    if (err) {
+                        return res.status(500).send({
+                            "message" : "unexpected error"
+                        })
+                    }
+    
+                    if (!check) {
+                        return res.status(404).send({
+                            "message" : "grade not created, please try again"
+                        })
+                    }
+                    return res.status(200).send({
+                        "message" : "successfully updated scores"
+                    });
+                })
+            } else
             if (subject == "Toan") {
                 grade.findOneAndUpdate({$and: [
                     {nid : nid},
@@ -659,12 +671,12 @@ function updateGradeBySubject(subject, nid, id, result, res) {
                     });
                 })
             } else
-            if (subject == "DaoDuc") {
+            if (subject == "GDCD") {
                 grade.findOneAndUpdate({$and: [
                     {nid : nid},
                     {"point.id" : id}
                 ]}, {
-                    "point.result.DaoDuc" : result
+                    "point.result.GDCD" : result
                 }, (err, check) => {
                     if (err) {
                         return res.status(500).send({

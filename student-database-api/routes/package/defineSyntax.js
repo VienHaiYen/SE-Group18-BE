@@ -1,7 +1,7 @@
 var currentTime = new Date();
 var year = currentTime.getFullYear() % 100;
 
-const CURRENT_YEAR = {first : year, second : year + 1};
+const CURRENT_YEAR = {first : year - 1, second : year};
 const STUDENTID_LENGTH = 8;
 const TEACHERID_LENGTH = 4;
 const ADMINID_LENGTH = 4;
