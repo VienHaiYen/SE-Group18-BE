@@ -457,4 +457,65 @@ router.post("/about", (req, res) => {
     }
 })
 
+router.post("/change-password", (req, res) => {
+    userSession = auth.ensureAuthenticated(req);
+    if (!userSession) {
+        return res.status(401).send({
+            "message" : "You are not logged in"
+        })
+    }
+
+    var newPassword = req.body.newPassword;
+    var currentPassword = req.body.currentPassword;
+    var id = userSession.id;
+
+    Account.findOne({id : id}, (err, account) => {
+        if (err) {
+            return res.status(500).send({
+                "message" : "unexpected error"
+            })
+        }
+
+        if (!account) {
+            return res.status(404).send({
+                "message" : "account not found"
+            })
+        }
+        account.checkPassword(currentPassword, (err, isMatch) => {
+            if (err) {
+                return res.status(500).send({
+                    "message" : "unexpected error"
+                })
+            }
+
+            if (isMatch) {
+                Account.findOneAndUpdate({id : id}, {password : newPassword},
+                    (err, account) => {
+                        if (err) {
+                            return res.status(500).send({
+                                "message" : "unexpected error"
+                            })
+                        }
+                
+                        if (!account) {
+                            return res.status(404).send({
+                                "message" : "record not found"
+                            })
+                        }
+                        return res.status(200).send({
+                            "message" : "password changed successfully"
+                        })
+
+                    })                
+            }
+            else {
+                return res.status(418).send({
+                    "message" : "password does not match"
+                })
+            }
+        })
+        
+    })
+})
+
 module.exports = router;

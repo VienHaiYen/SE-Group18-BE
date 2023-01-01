@@ -41,10 +41,10 @@ const teacher_layout = [
     to: "/about",
     label: "Thông tin",
   },
-  {
-    to: "/grade",
-    label: "Điểm số",
-  },
+  // {
+  //   to: "/grade",
+  //   label: "Điểm số",
+  // },
   {
     to: "/input-grade",
     label: "Nhập điểm cho học sinh",
