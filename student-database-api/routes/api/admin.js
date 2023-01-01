@@ -107,7 +107,13 @@ router.post("/input-student", function(req, res, next) {
     }
     else {
         var query = mongoose.model("account", Account.schema);
-        query.countDocuments({}, (err, count) => {
+        query.countDocuments({role : "student"}, (err, count) => {
+
+            if (err) {
+                return res.status(500).send({
+                    "message" : "unexpected error"
+                })
+            }
             var role = "student";
             var id = thisYear() + genZero(count + 1, role) + String(count + 1);
             var name = req.body.name;
@@ -216,6 +222,13 @@ router.post("/input-teacher", function(req, res, next) {
     else {    
         var query = mongoose.model("account", Account.schema);
         query.countDocuments({role : "teacher"}, (err, count) => {
+
+            if (err) {
+                return res.status(500).send({
+                    "message" : "unexpected error"
+                })
+            }
+
             var role = "teacher";
             var id = "t" + genZero(count + 1, role) + String(count + 1);
             var name = req.body.name;
