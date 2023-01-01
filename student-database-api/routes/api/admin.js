@@ -72,7 +72,7 @@ router.get("/teacher-list", function(req, res) {
 })
 
 router.get("/about/:id", (req, res) => {
-    if (!auth.ensureAdmin(req)) {
+    if (!auth.ensureAdmin(req) && !auth.ensureTeacher(req)) {
         return res.status(401).send({
             "message" : "You are not an admin"
         });
