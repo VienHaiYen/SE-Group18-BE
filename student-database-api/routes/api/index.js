@@ -46,13 +46,56 @@ router.get("/viewDev", function(req, res) {
 })
 
 router.get("/grade", (req, res) => {
-    userSession = auth.ensureAuthenticated(req);
-    if(!userSession) {    
-        return res.status(401).send({
-            "message" : "You are not logged in"
+    userSessionTeacher = auth.ensureTeacher(req);
+    userSessionAdmin = auth.ensureAdmin(req);
+    userSessionStudent = auth.ensureStudent(req);
+    if(userSessionTeacher) {   // teacher
+        var id = req.query.id;
+        var nid = req.query.nid;
+
+        Info.findOne({$and : [
+            {id : userSessionTeacher.id},
+            {role : "teacher"}
+        ]}, "subject", (err, info) => {
+            if (err) {
+                return res.status(500).send({
+                    "message" : "unexpected error"
+                })
+            }
+
+            if (!info) {
+                return res.status(404).send({
+                    "message" : "teacher info not found"
+                })
+            }
+            
+            var subject = info.subject;
+            Grade.findOne({ $and: [
+                {"point.id" : id},
+                {"nid" : nid}
+            ]}, "point.result", (err, result) => {
+                if (err) {
+                    return res.status(500).send({
+                        "message" : "unexpected error"
+                    })
+                }
+
+                if (!result) {
+                    return res.status(404).send({
+                        "message" : "score not found for this subject and student"
+                    })
+                }
+
+                console.log(userSessionTeacher.id, subject);
+                point = result.point.result[`${subject}`];
+                return res.status(200).send({
+                    // "subject" : subject,
+                    point
+                })
+            })
         })
     }
-    else {
+    else if (userSessionAdmin) { // admin
         // DEFINE FUNCTION HERE
         var id = req.query.id;
         var subject = req.query.subject;
@@ -118,8 +161,9 @@ router.get("/grade", (req, res) => {
                     })
                 }
 
-                point = result.point[0].result[`${subject}`];
+                point = result.point.result[`${subject}`];
                 return res.status(200).send({
+                    "subject" : subject,
                     point
                 })
             })
