@@ -368,7 +368,10 @@ router.post("/transfer-student-to-class", (req, res) => {
                     "message" : "student not found"
                 })              
             }
-            Class.findOneAndUpdate({ "id" : info._class}, {
+            Class.findOneAndUpdate({$and : [
+                { "id" : info._class},
+                {"nid" : nid}
+            ]}, {
                 $pullAll : {
                     "members" : [studentId]
                 }
