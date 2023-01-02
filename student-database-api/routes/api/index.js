@@ -168,6 +168,55 @@ router.get("/grade", (req, res) => {
                 })
             })
         }
+    } else if (userSessionStudent) {
+        var id = userSessionStudent.id;
+        var nid = req.query.nid;
+
+        if (nid = undefined) {
+            nid = getYear() + '1';
+        }
+
+        Grade.findOne({$and: [
+            {"point.id" : id},
+            {"nid" : nid}
+        ]}, (err, grade) => {
+            if (err) {
+                return res.status(500).send({
+                    "message" : "unexpected error"
+                })
+            }
+
+            if (!grade) {
+                var defaultValue = null;
+                var subjectPoint = {
+                    "mieng" :defaultValue,
+                    "_15" : defaultValue,
+                    "_45" : defaultValue,
+                    "_gk"  : defaultValue,
+                    "_ck": defaultValue,
+                }
+                var data = {
+                    "Toan": subjectPoint,
+                    "Van" : subjectPoint,
+                    "Anh" : subjectPoint,
+                    "Li" : subjectPoint,
+                    "Hoa" : subjectPoint,
+                    "Sinh" : subjectPoint,
+                    "Su" : subjectPoint,
+                    "Dia" : subjectPoint,
+                    "GDCD" : subjectPoint,
+                }
+
+                msg = poster.createGrade(nid, id, data);
+                return res.status(404).send({
+                    "message" : "grade not found"
+                })
+            }
+
+            return res.status(200).send(
+                grade
+            )
+        })
     }
 }) 
 
