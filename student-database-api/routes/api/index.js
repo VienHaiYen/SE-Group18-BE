@@ -172,7 +172,7 @@ router.get("/grade", (req, res) => {
         var id = userSessionStudent.id;
         var nid = req.query.nid;
 
-        if (nid = undefined) {
+        if (nid == undefined) {
             nid = getYear() + '1';
         }
 
