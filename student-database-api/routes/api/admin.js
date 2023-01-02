@@ -549,6 +549,110 @@ router.post("/about/:id", (req, res) => {
     }
 })
 
+router.post("/fill-in-grade", (req, res) => {
+    var userSessionAdmin = auth.ensureAdmin(req);
+    if (!userSessionAdmin) {
+        return res.status(401).send({
+            "message" : "You are not an admin"
+        })
+    } else {
+        var id = req.body.point.id;
+        var nid = req.body.nid;
+        var result = req.body.point.result;
+
+        if (!id || !nid || !grade) {
+            return res.status(418).send({
+                "message" : "Missing credentials"
+            })
+        }
+
+        Info.findOne({$and : [
+            {"id" : id},
+            {"role" : "student"}
+        ]}, (err, info) => {
+            if (err) {
+                return res.status(500).send({
+                    "message" : "Unexpected error"
+                })
+            }
+
+            if (!info) {
+                return res.status(404).send({
+                    "message" : "student info not found"
+                })
+            }
+
+            Grade.findByIdAndUpdate({$and :[
+                {"point.id" : id},
+                {"nid" : nid}
+            ]}, {"point.result" : result}, (err, grade) => {
+                if (err) {
+                    return res.status(500).send({
+                        "message" : "Unexpected error"
+                    })
+                }
+    
+                if (!grade) {
+                    msg = poster.createGrade(nid, id, result);
+                }
+    
+                return res.status(200).send({
+                    "message" : "Grade updated successfully"
+                })
+            })
+
+        })
+    }
+})
+
+router.post("/remove-student/:id", (req, res) => {
+    if (!auth.ensureAdmin(req)) {
+        return res.status(401).send({
+            "message" : "You are not an admin"
+        })
+    } else {
+        var {id} = req.params;
+        Info.findOneAndUpdate({$and : [
+            {id :  id},
+            {"role" : "student"}
+        ]}, {"_class" : null}, (err, info) => {
+            if (err) {
+                return res.status(500).send({
+                    "message" : "unexpected error"
+                })
+            }
+
+            if (!info) {
+                return res.status(404).send({
+                    "message" : "student not found"
+                })
+            }
+
+            Account.findOneAndUpdate({$and : [
+                {id :  id},
+                {"role" : "student"}
+            ]}, {"role" : "na"}, (err, check) => {
+                if (err) {
+                    return res.status(500).send({
+                        "message" : "unexpected error"
+                    })
+                }
+    
+                if (!check) {
+                    return res.status(404).send({
+                        "message" : "student not found"
+                    })
+                }
+
+                return res.status(200).send({
+                    "message" : `${id} successfully removed from school`
+                })
+            })
+        })
+    }
+})
+
+
 // DELETE
 
 router.delete("/delete/:id", function(req, res) {
@@ -614,6 +718,7 @@ router.delete("/delete/:id", function(req, res) {
         })
     }
 })
+
 
 
 

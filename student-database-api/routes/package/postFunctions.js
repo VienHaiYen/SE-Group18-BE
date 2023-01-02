@@ -284,13 +284,16 @@ function updateGrade(nid, id, result) {
     const grade = mongoose.model("grade", Grade.schema);
     grade.findOne({ $and: [
         {nid : nid},
-        {id : id}
+        {"point.id" : id}
     ]}, (err, check) => {
         if (err) {
             return MSG.ERROR_MESSAGE;
         }
         if (check != null) {
-            grade.findOneAndUpdate({"nid" : nid, "id" : id}, {"result" : result});
+            grade.findOneAndUpdate({$and : [
+                {"nid" : nid},
+                { "point.id" : id}
+            ]}, {"result" : result});
             return MSG.SUCCESS_MESSAGE;
         } else {
             return MSG.DUPPLICATE_MESSAGE;
