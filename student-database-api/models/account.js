@@ -30,6 +30,7 @@ accountSchema.pre("save", function(done) {
     var user = this;
 
     if (!user.isModified("password")) {
+        console.log("password is not modified")
         return done(); 
         // If there is not any change in the password field, 
         // while bother encrypt it again?

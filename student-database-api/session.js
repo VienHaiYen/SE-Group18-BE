@@ -10,6 +10,60 @@ router.use(express.json());
 
 var sessions = [];
 
+router.post("/alt-login", (req, res) => {
+    var {id, password, role} = req.body;
+    var result = mongoose.model("account", Account.schema);
+    if (!id || !password || !role) {
+        return res.status(418).send({
+            "message" : "missing credentials"
+        })
+    }
+    result.findOne({$and: [
+        {'id': id}, 
+        {'role': role},
+        {"password" : password}
+        ]}, function(err, user) {
+        if (err) {
+            return res.status(500).send({
+                "message" : "unexpected error"
+            })
+        }
+
+        if (!user) {
+            return res.status(401).send({
+                "message" : "Invalid credentials"
+            })  
+        }
+        const sessionId = uuidv4();
+        sessions[sessionId] = {id, userId: role};
+        console.log(sessionId);
+
+        res.cookie("id", sessionId,{
+            httpOnly: true,
+            secure: false,
+            path: "/",
+            sameSite: "strict",
+        })
+
+        console.log(`${id} logged in as ${sessions[sessionId].userId}`);
+
+        const info = mongoose.model("info", Info.schema);
+        var displayName; 
+        info.findOne({"id" : id}, "name", (err, result) => {
+            displayName = result["name"];
+            displayLayout = layout(role);
+            return res.status(200).send({
+                "name" : displayName,
+                "display" : [
+                    displayLayout
+                ],
+                "sid": sessionId
+            })
+        });
+    })
+})
+
+
 router.post("/login", (req,res) => {
 
     var {id, password, role} = req.body;

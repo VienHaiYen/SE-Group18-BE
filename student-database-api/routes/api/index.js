@@ -538,7 +538,7 @@ router.post("/change-password", (req, res) => {
             }
 
             if (isMatch) {
-                Account.findOneAndUpdate({id : id}, {password : newPassword},
+                Account.findOne({id : id},
                     (err, account) => {
                         if (err) {
                             return res.status(500).send({
@@ -551,6 +551,10 @@ router.post("/change-password", (req, res) => {
                                 "message" : "record not found"
                             })
                         }
+
+                        account.password = newPassword;
+                        account.save();
+
                         return res.status(200).send({
                             "message" : "password changed successfully"
                         })
@@ -563,6 +567,50 @@ router.post("/change-password", (req, res) => {
                 })
             }
         })
+        
+    })
+})
+
+router.post("/alt-change-password", (req, res) => {
+    userSession = auth.ensureAuthenticated(req);
+    if (!userSession) {
+        return res.status(401).send({
+            "message" : "You are not logged in"
+        })
+    }
+
+    var newPassword = req.body.newPassword;
+    var currentPassword = req.body.currentPassword;
+    var id = userSession.id;
+
+    Account.findOne({$and: [
+        {id : id},
+        {password : currentPassword}
+    ]}, (err, account) => {
+        if (err) {
+            return res.status(500).send({
+                "message" : "unexpected error"
+            })
+        }
+
+        if (!account) {
+            return res.status(404).send({
+                "message" : "account not found"
+            })
+        }
+
+        if (account) {
+            account.password = newPassword;
+            account.save();      
+            return res.status(200).send({
+                "message" : "password changed successfully"
+            })        
+        }
+        else {
+            return res.status(418).send({
+                "message" : "password does not match"
+            })
+        }
         
     })
 })
