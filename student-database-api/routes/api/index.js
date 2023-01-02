@@ -554,6 +554,7 @@ router.post("/change-password", (req, res) => {
 
                         account.password = newPassword;
                         account.save();
+                        
 
                         return res.status(200).send({
                             "message" : "password changed successfully"

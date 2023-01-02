@@ -299,7 +299,6 @@ function updateGrade(nid, id, result) {
             return MSG.DUPPLICATE_MESSAGE;
         }
     })
-
 }
 
 // NEED FIXING (DONE)
