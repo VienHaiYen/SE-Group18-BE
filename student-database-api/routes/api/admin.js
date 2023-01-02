@@ -605,6 +605,7 @@ router.post("/fill-in-grade", (req, res) => {
     }
 })
 
+// This function can be used to graduate or transfer away a student
 router.post("/remove-student/:id", (req, res) => {
     if (!auth.ensureAdmin(req)) {
         return res.status(401).send({
@@ -676,7 +677,9 @@ router.delete("/delete/:id", function(req, res) {
             }
 
             var _class = result._class;
-            console.log("removed from " + _class);
+            if (_class != undefined) {
+                console.log("removed from " + _class);
+            }
             Class.findOneAndUpdate({ "id" : _class}, {
                 $pullAll : {
                     "members" : [id]
@@ -689,12 +692,14 @@ router.delete("/delete/:id", function(req, res) {
                     })
                 }
     
-                if (!check) {
-                    return res.status(404).send({
-                        "message" : "record not found"
-                    })
+                // if (!check) {
+                //     return res.status(404).send({
+                //         "message" : "record not found"
+                //     })
+                // }
+                if (check) {
+                    console.log("removed from " + check.members);
                 }
-                console.log("removed from " + check.members);
 
                 Account.findOneAndUpdate({"id" : id}, {"role" : "na"}, (err, check) => {
                     if (err) {
