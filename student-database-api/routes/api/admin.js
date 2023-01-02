@@ -560,7 +560,7 @@ router.post("/fill-in-grade", (req, res) => {
         var nid = req.body.nid;
         var result = req.body.point.result;
 
-        if (!id || !nid || !grade) {
+        if (!id || !nid || !result) {
             return res.status(418).send({
                 "message" : "Missing credentials"
             })
