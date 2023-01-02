@@ -343,7 +343,7 @@ router.post("/rule", function(req, res, next) {
 //     }
 // }) 
 
-router.post("/add-student-to-class", (req, res) => {
+router.post("/transfer-student-to-class", (req, res) => {
     userSession = auth.ensureAdmin(req);
     if(!userSession) {    
         return res.status(401).send({
@@ -428,6 +428,56 @@ router.post("/add-student-to-class", (req, res) => {
     }
 
     
+})
+
+router.post("/add-student-to-class", (req, res) => {
+    userSession = auth.ensureAdmin(req);
+    if(!userSession) {    
+        return res.status(401).send({
+            "message" : "You are not an admin"
+        })  
+    } else {
+        var studentId = req.body.id;
+        var classId = req.body.classId;
+        var nid = req.body.nid;
+
+        Info.findOneAndUpdate({$and:[
+            {id : studentId},
+            {role : "student"}
+        ]}, {"_class" : classId}, (err, info) => {
+            if (err) {
+                return res.status(500).send({
+                    "message" : "Unexpected Error"
+                })
+            }
+            if (!info) {
+                return res.status(404).send({
+                    "message" : "student not found"
+                })              
+            }
+
+            Class.findOneAndUpdate({$and : [
+                {"id" : classId},
+                {"nid" : nid}
+            ]}, {
+                $push : {
+                    members : [studentId]
+                }
+            }, (err, check) => {
+                if (err) {
+                    return res.status(500).send({
+                        "message" : "Unexpected Error"
+                    })
+                }
+                if (!check) {
+                    return res.status(404).send({
+                        "message" : "class not found"
+                    })              
+                }
+                console.log(check);
+            })
+        })            
+    }
 })
 
 router.post("/about/:id", (req, res) => {
@@ -538,8 +588,24 @@ router.delete("/delete/:id", function(req, res) {
                     })
                 }
                 console.log("removed from " + check.members);
-                return res.status(200).send({
-                    "message" : `${id} successfully deleted`
+
+                Account.findOneAndUpdate({"id" : id}, {"role" : "na"}, (err, check) => {
+                    if (err) {
+                        console.log(err)
+                        return res.status(500).send({
+                            "message" : "unexpected error"
+                        })
+                    }
+        
+                    if (!check) {
+                        return res.status(404).send({
+                            "message" : "account not found"
+                        })
+                    }
+
+                    return res.status(200).send({
+                        "message" : `${id} successfully deleted`
+                    })
                 })
             })
         })
