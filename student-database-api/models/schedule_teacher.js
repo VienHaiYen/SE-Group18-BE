@@ -11,6 +11,6 @@ var teacherScheduleSchema = new mongoose.Schema({
     }]
 });
 
-var Teacher_schedule = mongoose.model("scheduleTeacher", teacherScheduleSchema);
+var Teacher_schedule = mongoose.model("teacher-schedule", teacherScheduleSchema);
 
 module.exports = Teacher_schedule;

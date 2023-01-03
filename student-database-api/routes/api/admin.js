@@ -571,8 +571,9 @@ router.post("/fill-in-grade", (req, res) => {
             {"role" : "student"}
         ]}, (err, info) => {
             if (err) {
+                console.log(err);
                 return res.status(500).send({
-                    "message" : "Unexpected error"
+                    "message" : "Unexpected error 1"
                 })
             }
 
@@ -582,13 +583,14 @@ router.post("/fill-in-grade", (req, res) => {
                 })
             }
 
-            Grade.findByIdAndUpdate({$and :[
+            Grade.findOneAndUpdate({$and :[
                 {"point.id" : id},
                 {"nid" : nid}
             ]}, {"point.result" : result}, (err, grade) => {
                 if (err) {
+                    console.log(err);
                     return res.status(500).send({
-                        "message" : "Unexpected error"
+                        "message" : "Unexpected error 2"
                     })
                 }
     
