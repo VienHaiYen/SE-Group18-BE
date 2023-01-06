@@ -107,7 +107,10 @@ router.post("/input-student", function(req, res, next) {
     }
     else {
         var query = mongoose.model("account", Account.schema);
-        query.countDocuments({role : "student"}, (err, count) => {
+        query.countDocuments({$or : [
+            {role : "student"},
+            {role : "na"}
+        ]}, (err, count) => {
 
             if (err) {
                 return res.status(500).send({
@@ -685,6 +688,7 @@ router.delete("/delete/:id", function(req, res) {
             var _class = result._class;
             if (_class != undefined) {
                 console.log("removed from " + _class);
+                _class = null;
             }
             Class.findOneAndUpdate({ "id" : _class}, {
                 $pullAll : {
@@ -707,7 +711,7 @@ router.delete("/delete/:id", function(req, res) {
                     console.log("removed from " + check.members);
                 }
 
-                Account.findOneAndUpdate({"id" : id}, {"role" : "na"}, (err, check) => {
+                Account.findOneAndDelete({"id" : id}, (err, check) => {
                     if (err) {
                         console.log(err)
                         return res.status(500).send({
@@ -721,8 +725,29 @@ router.delete("/delete/:id", function(req, res) {
                         })
                     }
 
-                    return res.status(200).send({
-                        "message" : `${id} successfully deleted`
+                    Grade.findOneAndDelete({$and :[
+                        {"id" : id},
+                        {$or : [
+                            {"nid" : getYear() + '1'},
+                            {"nid" : getYear() + '2'}
+                        ]}
+                    ]}, (err, check) => {
+                        if (err) {
+                            console.log(err)
+                            return res.status(500).send({
+                                "message" : "unexpected error"
+                            })
+                        }
+            
+                        if (!check) {
+                            return res.status(404).send({
+                                "message" : "account not found"
+                            })
+                        }
+
+                        return res.status(200).send({
+                            "message" : `${id} successfully deleted`
+                        })
                     })
                 })
             })
