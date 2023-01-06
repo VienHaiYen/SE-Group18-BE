@@ -161,35 +161,7 @@ router.post("/input-student", function(req, res, next) {
                 });;
             }
 
-            msg = poster.createAccount(id, id, role);
-            if (msg == MSG.ERROR_MESSAGE) {
-                return res.status(500).send({
-                    "message" : "Unexpected Error"
-                })
-            }
 
-            if (msg == MSG.SUCCESS_MESSAGE) {
-                poster.createProfile(id, role, name, birthday, address, gender, mail, phone, _class, subject, res);
-                var subjectPoint = {
-                    "mieng" :null,
-                    "_15" : null,
-                    "_45" :null,
-                    "_gk"  : null,
-                    "_ck": null
-                }
-                var data = {
-                    "Toan": subjectPoint,
-                    "Van" : subjectPoint,
-                    "Anh" : subjectPoint,
-                    "Li" : subjectPoint,
-                    "Hoa" : subjectPoint,
-                    "Sinh" : subjectPoint,
-                    "Su" : subjectPoint,
-                    "Dia" : subjectPoint,
-                    "GDCD" : subjectPoint,
-                }
-                poster.createGrade(getYear() + '1', id, data)
-            }
 
             Class.findOneAndUpdate({$and : [
                 {"id" : _class},
@@ -203,11 +175,43 @@ router.post("/input-student", function(req, res, next) {
                     console.log(err);    
                 }
                 if (!check) {
-                    console.log("class not found");             
+                    return res.status(404).send({
+                        "message" : "Class not found"
+                    })        
                 }
-                console.log(check);
+                else {
+                    msg = poster.createAccount(id, id, role);
+                    if (msg == MSG.ERROR_MESSAGE) {
+                        return res.status(500).send({
+                            "message" : "Unexpected Error"
+                        })
+                    }
+                    if (msg == MSG.SUCCESS_MESSAGE) {
+                        poster.createProfile(id, role, name, birthday, address, gender, mail, phone, _class, subject, res);
+                        var subjectPoint = {
+                            "mieng" :null,
+                            "_15" : null,
+                            "_45" :null,
+                            "_gk"  : null,
+                            "_ck": null
+                        }
+                        var data = {
+                            "Toan": subjectPoint,
+                            "Van" : subjectPoint,
+                            "Anh" : subjectPoint,
+                            "Li" : subjectPoint,
+                            "Hoa" : subjectPoint,
+                            "Sinh" : subjectPoint,
+                            "Su" : subjectPoint,
+                            "Dia" : subjectPoint,
+                            "GDCD" : subjectPoint,
+                        }
+                        poster.createGrade(getYear() + '1', id, data)
+                        console.log(check);
+                    }
+                    
+                }
             })
-            
         })
         
     }
