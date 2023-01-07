@@ -662,6 +662,138 @@ router.post("/remove-student/:id", (req, res) => {
     }
 })
 
+router.post("/assign-class-to-teacher", (req, res) => {
+    var userSessionAdmin = auth.ensureAdmin(req);
+    if (!userSessionAdmin) {
+        return res.status(401).send({
+            "message" : "You are not an admin"
+        })
+    }
+    else {
+        var id = req.body.id;
+        var _class = req.body._class;
+        var nid = req.body.nid;
+        if (nid == undefined) {
+            nid = getYear();
+        }
+        Info.findOne({id : id}, "subject", (err, result) => {
+            if (err) {
+                return res.status(500).send({
+                    "message" : "unexpected error"
+                })
+            }
+            
+            if (!result) {
+                return res.status(500).send({
+                    "message" : `teacher of id ${id} not found`
+                })
+            } else {
+                var subject = result.subject;
+                Info.find({"subject" : subject}, "id", (err, result) => {
+                    if (err) {
+                        return res.status(500).send({
+                            "message" : "unexpected error"
+                        })
+                    }
+
+
+                    var teacherOfTheSameSubject = [];
+                    for (let i = 0; i < result.length; i++) {
+                        teacherOfTheSameSubject[i] = result[i].id;
+                    }
+                    
+                    teacher_schedule.findOne({nid : nid}, (err, result) => {
+                        if (err) {
+                            return res.status(500).send({
+                                "message" : "unexpected error"
+                            })
+                        }
+
+                        if (!result) {
+                            return res.status(404).send({
+                                "message" : `teacher schedule of nid ${nid} not found`
+                            })
+                        }
+
+                        for (let i = 0; i < teacherOfTheSameSubject.length; i++) {
+                            for (let j = 0; j < result.schedule.length; j++) {
+                                const thisTeacher = result.schedule[j];
+                                if (teacherOfTheSameSubject[i] == thisTeacher.id) {
+                                    const classArray = thisTeacher._class;
+                                    const index = classArray.indexOf(_class);
+                                    if (index > -1) {
+                                        classArray.splice(index, 1);
+                                    }
+                                }
+                            }
+                        }
+                        for (let j = 0; j < result.schedule.length; j++) {
+                            const thisTeacher = result.schedule[j];
+                            if (thisTeacher.id == id) {
+                                thisTeacher._class.push(_class);
+                                break;
+                            }
+                        }
+
+                        result.save();
+
+                        return res.status(200).send({
+                            message : "successfully assign teacher to class",
+                            teacherOfTheSameSubject,
+                            result
+                        });
+                    })
+
+                })
+            }
+        })
+    }
+})
+
+router.post("/remove-teacher-from-class", (req, res) => {
+    var userSessionAdmin = auth.ensureAdmin(req);
+    if (!userSessionAdmin) {
+        return res.status(401).send({
+            "message" : "You are not an admin"
+        })
+    }
+    else {
+        var id = req.body.id;
+        var _class = req.body._class;
+        var nid = req.body.nid;
+        if (nid == undefined) {
+            nid = getYear();
+        }
+        teacher_schedule.findOne({"nid" : nid}, (err, result) => {
+            if (err) {
+                return res.status(500).send({
+                    "message" : "unexpected error"
+                })
+            }
+
+            if (!result) {
+                return res.status(404).send({
+                    "message" : `teacher schedule of nid ${nid} not found`
+                })
+            }
+
+            for (let i = 0; i < result.schedule.length; i++) {
+                const thisTeacher = result.schedule[j];
+                if (thisTeacher.id == id) {
+                    const classArray = thisTeacher._class;
+                    const index = classArray.indexOf(_class);
+                    classArray.splice(index, 1);
+                }
+            }
+
+            result.save();
+            return res.status(200).send({
+                "message" : "successfully remove teacher from class",
+                result
+            })
+        })
+    }
+})
 
 // DELETE
 
@@ -754,9 +886,6 @@ router.delete("/delete/:id", function(req, res) {
         })
     }
 })
-
-
-
 
 
 module.exports = router;

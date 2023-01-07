@@ -46,7 +46,7 @@ router.get("/viewDev", function(req, res) {
 })
 
 router.get("/validate", function(req, res) {
-    userSessionAdmin = auth.ensureAdmin(req);
+    var userSessionAdmin = auth.ensureAdmin(req);
     if (!userSessionAdmin) {
         return res.status(401).send({
             "message" : "You are not an admin"
