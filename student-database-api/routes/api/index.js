@@ -39,11 +39,69 @@ router.get("/viewDev", function(req, res) {
         })
     }
     else {
-        res.status(401).send({
+        return res.status(401).send({
             "message" : "You are not logged in"
         })
     }
 })
+
+router.get("/validate", function(req, res) {
+    userSessionAdmin = auth.ensureAdmin(req);
+    if (!userSessionAdmin) {
+        return res.status(401).send({
+            "message" : "You are not an admin"
+        })
+    }
+    else {
+        var birthyear = req.query.byear;
+
+        var currentTime = new Date();
+        var age = currentTime.getFullYear() - birthyear;
+        
+        var numberOfStudent = req.query.snum;
+        var numberOfClass10 = req.query.cnum10;
+        var numberOfClass11 = req.query.cnum11;
+        var numberOfClass12 = req.query.cnum12;
+
+        var nid = req.query.nid;
+        if (nid == undefined) {
+            nid = thisYear.getYear() + '1';
+        }
+        
+        Rule.findOne({"nid" : nid}, (err, rule) => {
+            if (err) {
+                return res.status(500).send({
+                    "message" : "unexpected error"
+                })
+            }
+
+            if (!rule) {
+                return res.status(404).send({
+                    "message" : "rule not set for this nid"
+                })
+            }
+
+            var checkAge = (((age <= rule.age.max) && (age >= rule.age.min)) || age == undefined);
+            var checkNumberOfStudent = (((numberOfStudent <= rule.numberOfStudent.max) && (numberOfStudent >= rule.numberOfStudent.min)) || numberOfStudent == undefined);
+            var checkNumberOfClass10 = (numberOfClass10 == rule.numberOfClass._10 || numberOfClass10 == undefined);
+            var checkNumberOfClass11 = (numberOfClass11 == rule.numberOfClass._11 || numberOfClass11 == undefined);
+            var checkNumberOfClass12 = (numberOfClass12 == rule.numberOfClass._12 || numberOfClass12 == undefined);
+
+            var result = {
+                age : checkAge,
+                snum : checkNumberOfStudent,
+                cnum10 : checkNumberOfClass10,
+                cnum11 : checkNumberOfClass11,
+                cnum12 : checkNumberOfClass12
+            }
+
+            return res.status(200).send(
+                result
+            )
+        })
+    }
+})
+
 
 router.get("/grade", (req, res) => {
     userSessionTeacher = auth.ensureTeacher(req);
