@@ -330,9 +330,8 @@ router.get("/teacher-schedule", function(req,res) {
         var nid = req.query.nid;
         const ts = mongoose.model("teacher-schedule", Teacher_schedule.schema);
         ts.findOne({$and: [
-            {nid : nid},
-            {id : id}
-        ]}, "_class",(err, ts) => {
+            {nid : nid}
+        ]},(err, ts) => {
             if (err) {
                 return res.status(500).send({
                     "message" : "unexpected error"
@@ -344,6 +343,7 @@ router.get("/teacher-schedule", function(req,res) {
                     "message" : "record not found"
                 })
             }
+            var schedule = ts.schedule;
 
             Info.findOne({id : id} , "name subject" , (err, info) => {
                 if (err) {
@@ -357,8 +357,17 @@ router.get("/teacher-schedule", function(req,res) {
                         "message" : "record not found"
                     })
                 }
+
+                var _class;
+                for (let i = 0; i < schedule.length; i++) {
+                    const thisTeacher = schedule[i];
+                    if (thisTeacher.id == id) {
+                        _class = thisTeacher._class;
+                    }
+                }
+
                 return res.status(404).send({
-                    _classes,
+                    _class,
                     "name" : info.name,
                     "subject" : info.subject
                 })
