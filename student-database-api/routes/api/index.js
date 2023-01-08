@@ -366,7 +366,7 @@ router.get("/teacher-schedule", function(req,res) {
                     }
                 }
 
-                return res.status(404).send({
+                return res.status(200).send({
                     _class,
                     "name" : info.name,
                     "subject" : info.subject
