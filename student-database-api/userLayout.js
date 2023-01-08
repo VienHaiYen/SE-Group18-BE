@@ -9,10 +9,6 @@ const admin_layout = [
     label: "Điểm số",
   },
   {
-    to: "/schedule",
-    label: "Thời khóa biểu",
-  },
-  {
     to: "/input-student",
     label: "Thêm học sinh",
   },
@@ -69,10 +65,6 @@ const student_layout = [
   {
     to: "/grade",
     label: "Điểm số",
-  },
-  {
-    to: "/schedule",
-    label: "Thời khóa biểu",
   },
 ];
 
