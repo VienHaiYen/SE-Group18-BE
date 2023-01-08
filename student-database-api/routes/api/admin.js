@@ -778,7 +778,7 @@ router.post("/remove-teacher-from-class", (req, res) => {
             }
 
             for (let i = 0; i < result.schedule.length; i++) {
-                const thisTeacher = result.schedule[j];
+                const thisTeacher = result.schedule[i];
                 if (thisTeacher.id == id) {
                     const classArray = thisTeacher._class;
                     const index = classArray.indexOf(_class);
