@@ -375,6 +375,7 @@ router.post("/transfer-student-to-class", (req, res) => {
                     "message" : "student not found"
                 })              
             }
+            console.log(info)
             Class.findOneAndUpdate({$and : [
                 { "id" : info._class},
                 {"nid" : nid}
@@ -390,11 +391,11 @@ router.post("/transfer-student-to-class", (req, res) => {
                     })
                 }
     
-                if (!check) {
-                    return res.status(404).send({
-                        "message" : "record not found"
-                    })
-                }
+                // if (!check) {
+                //     return res.status(404).send({
+                //         "message" : "source class not found"
+                //     })
+                // }
 
                 Info.findOneAndUpdate({$and:[
                     {id : studentId},
@@ -426,10 +427,13 @@ router.post("/transfer-student-to-class", (req, res) => {
                         }
                         if (!check) {
                             return res.status(404).send({
-                                "message" : "class not found"
+                                "message" : "destination class not found"
                             })              
                         }
-                        console.log(check);
+
+                        return res.status(200).send({
+                            "message" : "successfully transfer student to class"
+                        })
                     })
                 })
             })
